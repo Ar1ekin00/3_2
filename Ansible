@@ -1,0 +1,71 @@
+настроить на srv ens19:
+ip - 10.0.128.1
+
+настроить на ecorouter:
+config
+no security default
+interface eth0
+  ip address 10.0.128.2/30
+  port te0
+  service-instance te0/eth0
+  encapsulation untagged
+  connect ip interface eth0
+
+установить ansible
+apt-get install ansible
+
+ansible-galaxy collection install cisco.ios - несколько раз вводите пока не скажет
+Process install dependency map
+Starting collection install process
+Skipping 'cisco.ios' as it is already installed
+
+ansible-galaxy collection install ansible_collections.ansible.netcommon - тоже несколько раз
+
+ansible-galaxy collection install cisco.ios -vvv - также несколько раз можно ввести, если попросит
+
+inventory так выглядеть должен:
+all:
+  children:
+    routers:
+      hosts:
+        br-rtr:
+          ansible_host: 10.0.128.2
+          ansible_user: admin
+          ansible_password: admin
+          ansible_network_os: ios
+      vars:
+        ansible_connection: network_cli
+        ansible_become: yes
+        ansible_become_method: enable
+
+playbook:
+---
+- name: Basic configuration for network devices
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Configure hostname
+      cisco.ios.ios_config:
+        lines:
+          - hostname {{ inventory_hostname }}
+
+    - name: Configure interface GigabitEthernet0/1
+      cisco.ios.ios_config:
+        parents: int GE1
+        lines:
+          - description To {{ inventory_hostname }} network
+          - ip address 192.168.252.1 255.255.255.0
+          - no shutdown
+
+    - name: Configure interface GigabitEthernet0/2
+      cisco.ios.ios_config:
+        parents: int GE2
+        lines:
+          - description To {{ inventory_hostname }} LAN
+          - ip address 10.0.1.1 255.255.255.0
+          - no shutdown
+
+    - name: Save running config
+      cisco.ios.ios_config:
+        save_when: modified
