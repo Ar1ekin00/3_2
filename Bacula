@@ -71,3 +71,8 @@ TYPE=eth
 На всех трёх машинах перезагружаем сеть и обновляем список пакетов:
  systemctl restart network
  apt-get update
+
+Скачивание и настройка Bacula. На Server:
+ apt-get install -y bacula13-director bacula13-client bacula13-console bacula13-director-sqlite3
+На cli:
+ apt-get install -y bacula13-storage
