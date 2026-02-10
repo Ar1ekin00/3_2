@@ -1,0 +1,73 @@
+Либо статикой, либо dhcp-сервером настраиваем адреса локальной сети:
+ISP - 192.168.1.1/24
+SRV - 192.168.1.10/24
+CLI - 192.168.1.20/24
+Для статики настраиваем на SRV и CLI:
+ echo 192.168.1.10/24 > /etc/net/ifaces/enp0s3/ipv4address и echo 192.168.1.20/24 > /etc/net/ifaces/enp0s3/ipv4address
+ echo default via 192.168.1.1 > /etc/net/ifaces/enp0s3/ipv4route
+ echo nameserver 192.168.1.1 > /etc/net/ifaces/enp0s3/resolv.conf
+ echo nameserver 8.8.8.8 >> /etc/net/ifaces/enp0s3/resolv.conf
+Отдельно на SRV:
+  echo 192.168.1.10/24 > /etc/net/ifaces/enp0s3/ipv4address
+Отдельно на CLI:
+ echo 192.168.1.20/24 > /etc/net/ifaces/enp0s3/ipv4address
+ systemctl restart network
+Для DHCP-сервера скачиваем пакет и настраиваем на ISP:
+ apt-get update
+ apt-get install -y dhcp-server
+В файле /etc/sysconfig/dhcpd
+В строку «DHCPARGS=» - вписываем после = ens19
+ DHCPDARGS=ens19
+Создаём файл конфигруации dhcpd:
+ cp dhcpd.conf.sample dhcpd.conf 
+В файле должна быть такая конфигурация:
+# See dhcpd.conf(5) for further configuration
+
+ddns-update-style none;
+
+subnet 192.168.1.0 netmask 255.255.255.0 {
+        option routers                  192.168.1.1;
+        option subnet-mask              255.255.255.0;
+
+        option nis-domain               "lot.ro";
+        option domain-name              "lot.ro";
+        option domain-name-servers      192.168.1.1, 8.8.8.8, 8.8.4.4;
+
+        range 192.168.1.50 192.168.1.100;
+        default-lease-time 21600;
+        max-lease-time 43200;
+}
+host cli {
+  hardware ethernet bc:24:11:b4:e3:15; #MAC-адрес
+  fixed-address 192.168.1.20;
+}
+host server {
+  hardware ethernet bc:24:11:aa:51:52; #MAC-адрес
+  fixed-address 192.168.1.10;
+}
+
+MAC-адреса смотрите в параметрах сетевого адаптора ens18 на машинах server и cli командой:
+ ip -c a (обычно он выделен жёлтым или оранжевым)
+После настройки включаем:
+ systemctl enable --now dhcpd
+Также настраиваем NAT на ISP:
+ apt-get install iptables
+В файле /etc/net/sysctl.conf 
+редактируем строку (вместо 0, пишем 1):
+ net.ipv4.ip_forward = 0 
+Сохраняем:
+ sysctl –p
+Создаём правило:
+ iptables –t nat –A POSTROUTING –o ens18 –j MASQUERADE
+Сохраняем:
+ iptables-save –f /etc/sysconfig/iptables 
+Включаем:
+ systemctl enable --now iptables
+
+На CLI и Server в файле /etc/net/ifaces/ens18/options указываем:
+BOOTPROTO=dhcp
+TYPE=eth
+
+На всех трёх машинах перезагружаем сеть и обновляем список пакетов:
+ systemctl restart network
+ apt-get update
