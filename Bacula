@@ -56,11 +56,11 @@ MAC-адреса смотрите в параметрах сетевого ад�
 редактируем строку (вместо 0, пишем 1):
  net.ipv4.ip_forward = 0 
 Сохраняем:
- sysctl –p
+ sysctl -p
 Создаём правило:
- iptables –t nat –A POSTROUTING –o ens18 –j MASQUERADE
+ iptables -t nat -A POSTROUTING -o ens18 -j MASQUERADE
 Сохраняем:
- iptables-save –f /etc/sysconfig/iptables 
+ iptables-save -f /etc/sysconfig/iptables 
 Включаем:
  systemctl enable --now iptables
 
