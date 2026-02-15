@@ -125,7 +125,12 @@ mcedit grant_mysql_privileges
 ./make_mysql_tables
 ./grant_mysql_privileges
 
+Заходим в директорию с файлами конфигурации и редактируем файлы:
+cd /etc/bacula
 
+
+
+Таким должен быть конфиг bacula-dir.conf:
 # Director
 Director {
   Name = "srv-dir"
@@ -300,3 +305,347 @@ FileSet {
     File = /
   }
 }
+
+
+
+Таким должен быть конфиг bacula-fd.conf:
+#
+# Default  Bacula File Daemon Configuration file
+#
+#  For Bacula release 2.4.4 (28 December 2008) -- redhat 
+#
+# There is not much to change here except perhaps the
+# File daemon Name to
+#
+
+#
+# List Directors who are permitted to contact this File daemon
+#
+Director {
+  Name = srv-dir
+  Password = "root"
+  TLS Enable = no
+  TLS Require = no
+  TLS PSK Enable = no
+}
+
+#
+# Restricted Director, used by tray-monitor to get the
+#   status of the file daemon
+#
+#Director {
+#  Name = dir-mon
+#  Password = ""
+#  Monitor = yes
+#}
+
+#
+# "Global" File daemon configuration specifications
+#
+
+FileDaemon {                          # this is me
+  Name = srv-fd
+  FDport = 9102                  # where we listen for the director
+  WorkingDirectory = /var/lib/bacula
+  Pid Directory = /var/run/bacula
+  Maximum Concurrent Jobs = 20
+  TLS Enable = no
+  TLS Require = no
+}
+
+# Send all messages except skipped files back to Director
+Messages {
+  Name = Standard
+  director = dir = all, !skipped, !restored
+}
+
+
+
+Таким должен быть конфиг bacula-sd.conf:
+#
+# Default Bacula Storage Daemon Configuration file
+#
+#  For Bacula release 2.4.4 (28 December 2008) -- redhat 
+#
+# You may need to change the name of your tape drive
+#   on the "Archive Device" directive in the Device
+#   resource.  If you change the Name and/or the 
+#   "Media Type" in the Device resource, please ensure
+#   that dird.conf has corresponding changes.
+#
+
+Storage {                             # definition of myself
+  Name = cli-sd
+  SDPort = 9103                  # Director's port
+  WorkingDirectory = "/var/lib/bacula"
+  Pid Directory = "/var/run/bacula"
+  Maximum Concurrent Jobs = 20
+}
+
+#
+# List Directors who are permitted to contact Storage daemon
+#
+Director {
+  Name = dir
+@/etc/bacula/bacula-sd-password.conf
+}
+
+#
+# Restricted Director, used by tray-monitor to get the
+#   status of the storage daemon
+#
+#Director {
+#  Name = dir-mon
+#  Password = ""
+#  Monitor = yes
+#}
+
+
+@|"sh -c 'for f in /etc/bacula/device.d/*.conf ; do echo @${f} ; done'"
+
+#
+# Send all messages to the Director, 
+# mount messages also are sent to the email address
+#
+Messages {
+  Name = Standard
+  director = dir = all
+}
+
+
+
+Файлы с паролями на Server:
+[root@server bacula]# cat bacula-dir-password.conf 
+Password = "root"
+
+[root@server bacula]# cat bacula-fd-password.conf 
+Password = "root"
+
+[root@server bacula]# cat bacula-sd-password.conf 
+Password = "root"
+
+
+
+Отредактировать файл: /etc/my.cnf.d/server.cnf
+В секции [mysqld] должно быть:
+port = 3306 (18 строка)
+skip-networking = 0 (44 строка)
+bind-address = 127.0.0.1 (135 строка)
+
+Вот весь файл как должен выглядеть:
+#
+# These groups are read by MariaDB/MySQL server.
+# Use it for options that only the server (but not clients) should see
+#
+# See the examples of server my.cnf files in /usr/share/mysql/
+#
+
+# this is read by the standalone daemon and embedded servers
+[server]
+
+# this is only for the mysqld standalone daemon
+[mysqld]
+user            = mysql
+
+# Path to datadir, socket and etc in /etc/my.cnf.server/
+!include /etc/my.cnf.server/server-chroot.cnf
+
+port            = 3306
+skip-external-locking
+key_buffer_size = 16M
+max_allowed_packet = 32M
+table_open_cache = 64
+sort_buffer_size = 512K
+net_buffer_length = 8K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+
+collation-server = utf8_general_ci
+init-connect = 'SET NAMES utf8'
+character-set-server = utf8
+
+# plugins
+#plugin-load=ha_archive.so;ha_blackhole.so;ha_federatedx.so
+
+# activate the federated storage engine
+#federated
+
+# Don't listen on a TCP/IP port at all. This can be a security enhancement,
+# if all processes that need to connect to mysqld run on the same host.
+# All interaction with mysqld must be made via Unix sockets or named pipes.
+# Note that using this option without enabling named pipes on Windows
+# (via the "enable-named-pipe" option) will render mysqld useless!
+# 
+skip-networking=0
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+# Replication Master Server (default)
+# binary logging is required for replication
+#log-bin=mysql-bin
+
+# required unique id between 1 and 2^32 - 1
+# defaults to 1 if master-host is not set
+# but will not function as a master if omitted
+server-id       = 1
+
+# Replication Slave (comment out master section to use this)
+#
+# To configure this host as a replication slave, you can choose between
+# two methods :
+#
+# 1) Use the CHANGE MASTER TO command (fully described in our manual) -
+#    the syntax is:
+#
+#    CHANGE MASTER TO MASTER_HOST=<host>, MASTER_PORT=<port>,
+#    MASTER_USER=<user>, MASTER_PASSWORD=<password> ;
+#
+#    where you replace <host>, <user>, <password> by quoted strings and
+#    <port> by the master's port number (3306 by default).
+#
+#    Example:
+#
+#    CHANGE MASTER TO MASTER_HOST='125.564.12.1', MASTER_PORT=3306,
+#    MASTER_USER='joe', MASTER_PASSWORD='secret';
+#
+# OR
+#
+# 2) Set the variables below. However, in case you choose this method, then
+#    start replication for the first time (even unsuccessfully, for example
+#    if you mistyped the password in master-password and the slave fails to
+#    connect), the slave will create a master.info file, and any later
+#    change in this file to the variables' values below will be ignored and
+#    overridden by the content of the master.info file, unless you shutdown
+#    the slave server, delete master.info and restart the slaver server.
+#    For that reason, you may want to leave the lines below untouched
+#    (commented) and instead use CHANGE MASTER TO (see above)
+#
+# required unique id between 2 and 2^32 - 1
+# (and different from the master)
+# defaults to 2 if master-host is set
+# but will not function as a slave if omitted
+#server-id       = 2
+#
+# The replication master for this slave - required
+#master-host     =   <hostname>
+#
+# The username the slave will use for authentication when connecting
+# to the master - required
+#master-user     =   <username>
+#
+# The password the slave will authenticate with when connecting to
+# the master - required
+#master-password =   <password>
+#
+# The port the master is listening on.
+# optional - defaults to 3306
+#master-port     =  <port>
+#
+# binary logging - not required for slaves, but recommended
+#log-bin=mysql-bin
+
+# Point the following paths to different dedicated disks
+#tmpdir         = /var/tmp
+#log-update     = /path-to-dedicated-directory/hostname
+
+# Uncomment the following if you are using InnoDB tables
+#innodb_data_home_dir = /var/lib/mysql/db/
+#innodb_data_file_path = ibdata1:10M:autoextend
+#innodb_log_group_home_dir = /var/lib/mysql/db/
+# You can set .._buffer_pool_size up to 50 - 80 %
+# of RAM but beware of setting memory usage too high
+#innodb_buffer_pool_size = 16M
+#innodb_additional_mem_pool_size = 2M
+# Set .._log_file_size to 25 % of buffer pool size
+#innodb_log_file_size = 5M
+#innodb_log_buffer_size = 8M
+#innodb_flush_log_at_trx_commit = 1
+#innodb_lock_wait_timeout = 50
+
+# http://stackoverflow.com/questions/3456159/how-to-shrink-purge-ibdata1-file-in-mysql
+innodb_file_per_table = 1
+
+
+bind-address=127.0.0.1
+
+[myisamchk]
+key_buffer_size = 20M
+sort_buffer_size = 20M
+read_buffer = 2M
+write_buffer = 2M
+
+[mysqlhotcopy]
+interactive-timeout
+
+# this is only for embedded server
+[embedded]
+
+# This group is only read by MariaDB servers, not by MySQL.
+# If you use the same .cnf file for MySQL and MariaDB,
+# you can put MariaDB-only options here
+[mariadb]
+
+# This group is only read by MariaDB-10.0 servers.
+# If you use the same .cnf file for MariaDB of different versions,
+# use this group for options that older servers don't understand
+[mariadb-10.0]
+
+
+
+Написание скрипта:
+nano /usr/local/bin/backup-mysql.sh
+#!/bin/bash
+BACKUP_DIR="/var/backups/mysql"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+DB_NAME="bacula"
+DB_USER="root"
+DB_PASS="root"
+
+mkdir -p $BACKUP_DIR
+
+# Создание дампа с сжатием
+mysqldump -u$DB_USER -p$DB_PASS --single-transaction $DB_NAME | \
+  gzip > $BACKUP_DIR/webdb_${TIMESTAMP}.sql.gz
+
+# Очистка старых бэкапов (оставляем 7 дней)
+find $BACKUP_DIR -name "webdb_*.sql.gz" -mtime +7 -delete
+
+# Проверка целостности последнего бэкапа
+if [ $? -eq 0 ]; then
+  echo "MySQL backup completed successfully at $TIMESTAMP" >> /var/log/mysql-backup.log
+  exit 0
+else
+  echo "MySQL backup FAILED at $TIMESTAMP" >> /var/log/mysql-backup.log
+  exit 1
+fi
+
+
+
+Выдаём права доступа на этот файл:
+chmod +x /usr/local/bin/backup-mysql.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Проверяем работу базы данных bacula:
+mysql -u root -p'root' -h127.0.0.1 bacula -e "SELECT 1;"
+
