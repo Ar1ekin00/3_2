@@ -72,9 +72,10 @@ TYPE=eth
  systemctl restart network
  apt-get update
 
-Скачивание и настройка Bacula. На Server:
- apt-get install -y bacula13-director bacula13-client bacula13-console bacula13-director-sqlite3
+Скачиваем необходимые пакеты с bacula и : Bacula-director 
+На Server:
+apt-get install -y bacula15-director-common bacula15-director-mysql bacula15-common bacula15-storage bacula15-console bacula15-client
 На cli:
- apt-get install -y bacula13-storage
+apt-get install -y bacula15-storage
 
-https://www.altlinux.org/Bacula_15
+
