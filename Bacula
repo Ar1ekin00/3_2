@@ -102,6 +102,10 @@ cli backup # rpm -qa | grep bacula
  bacula15-storage-15.0.2-alt2.x86_64
 
 ДАЛЬШЕ ВСЁ ДЕЛАЕМ НА СЕРВЕРЕ:
+Запускаем и проверяем, работает ли база данных 
+ systemctl enable --now mariadb
+ systemctl status mariadb
+
 [root@server etc]# mysql -u root -p (далее пароль пользователя root - toor)
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'root'; - меняем пароль
 FLUSH PRIVILEGES;
@@ -629,23 +633,85 @@ chmod +x /usr/local/bin/backup-mysql.sh
 
 
 
+ДАЛЕЕ РАБОТАЕМ НА CLI:
+cd /etc/bacula
 
 
 
+Таким должен быть файл bacula-sd.conf:
+Storage {
+  Name = cli-sd
+  SDPort = 9103
+  WorkingDirectory = "/var/lib/bacula"
+  PidDirectory = "/var/run/bacula"
+  Maximum Concurrent Jobs = 20
+  SDAddress = 192.168.1.20
+  TLS Enable = no 
+  TLS Require = no
+}
+
+Director {
+  Name = srv-dir
+  Password = "root"
+  TLS Enable = no
+  TLS PSK Enable = no
+  TLS Require = no
+  TLS Authenticate = no
+}
+
+Device {
+  Name = cli-sd
+  Media Type = File
+  Archive Device = /backup
+  LabelMedia = yes
+  Random Access = yes
+  AutomaticMount = yes
+  RemovableMedia = no
+  AlwaysOpen = no
+}
+
+Messages {
+  Name = Standard
+  director = srv-dir = all
+}
 
 
 
+Файлы с паролями на CLI:
+[root@server bacula]# cat bacula-dir-password.conf 
+Password = "root"
+
+[root@server bacula]# cat bacula-fd-password.conf 
+Password = "root"
+
+[root@server bacula]# cat bacula-sd-password.conf 
+Password = "root"
 
 
 
+Создаём каталог для бэкапов и выдаём права доступа:
+mkdir -p /backup
+chmod 750 /backup
 
 
+Запускаем все службы:
+На SERVER:
+systemctl enable --now bacula-dir.service
+systemctl enable --now bacula-fd.service
+systemctl enable --now bacula-sd.service
+На CLI:
+systemctl enable --now bacula-sd.service
 
-
-
-
+ЕСЛИ ВЫДАЁТ ОШИБКУ, ТО ВОТ КОМАНДА journalctl -u bacula-sd.service -n 100 --no-pager (в зависимости от того, что не работает, название того сервиса и ставьте)
 
 
 Проверяем работу базы данных bacula:
 mysql -u root -p'root' -h127.0.0.1 bacula -e "SELECT 1;"
+Вывод должен быть такой:
++---+
+| 1 |
++---+
+| 1 |
++---+
+
 
