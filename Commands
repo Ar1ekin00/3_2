@@ -1,0 +1,3 @@
+Полезные команды:
+rpm -qa | grep <название пакета> - показывает, какие пакеты установлены.
+journalctl -u <название сервиса> -n 100 --no-pager - покажет ошибки (например, для dhcpd - journalctl -u dhcpd -n 100 --no-pager или для bacula-dir - journalctl -u bacula-dir.service -n 100 --no-pager)
