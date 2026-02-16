@@ -137,10 +137,11 @@ cli backup # rpm -qa | grep bacula
  systemctl enable --now mariadb
  systemctl status mariadb
 
-[root@server etc]# mysql -u root -p (далее пароль пользователя root - toor)
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'root'; - меняем пароль
-FLUSH PRIVILEGES;
-EXIT;
+[root@server etc]# mysql -u root 
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'root'; - меняем пароль для пользователя root на localhost. Новый пароль - root
+FLUSH PRIVILEGES; - перезагружаем таблицы прав доступа
+EXIT; - выходим
+[root@server etc]# mysql -u root -p (можем зайти в БД с паролем, который указали выше)
 
 Создаём базу данных.
 Заходим в каталог /usr/share/bacula/scripts. Перед запуском скриптов редактируем их:
@@ -159,6 +160,7 @@ mcedit grant_mysql_privileges
 ./create_mysql_database
 ./make_mysql_tables
 ./grant_mysql_privileges
+(везде пароль root)
 
 Заходим в директорию с файлами конфигурации и редактируем файлы:
 cd /etc/bacula
@@ -464,8 +466,8 @@ Password = "root"
 Отредактировать файл: /etc/my.cnf.d/server.cnf
 В секции [mysqld] должно быть:
 port = 3306 (18 строка)
-skip-networking = 0 (44 строка)
-bind-address = 127.0.0.1 (135 строка)
+skip-networking = 0 (45 строка)
+bind-address = 127.0.0.1 (136 строка)
 
 Вот весь файл как должен выглядеть:
 #
@@ -721,8 +723,9 @@ Password = "root"
 
 
 Создаём каталог для бэкапов и выдаём права доступа:
+cd /
 mkdir -p /backup
-chmod 750 /backup
+chmod 777 /backup
 
 
 Запускаем все службы:
@@ -737,7 +740,7 @@ systemctl enable --now bacula-sd.service
 
 
 Проверяем работу базы данных bacula:
-mysql -u root -p'root' -h127.0.0.1 bacula -e "SELECT 1;"
+mysql -u root -p'root' -hlocalhost bacula -e "SELECT 1;"
 Вывод должен быть такой:
 +---+
 | 1 |
@@ -747,6 +750,16 @@ mysql -u root -p'root' -h127.0.0.1 bacula -e "SELECT 1;"
 
 СОЗДАНИЕ BACKUP И ВОССТАНОВЛЕНИЕ ДАННЫХ:
 bconsole
+ДЛЯ ETC-BACKUP:
+label
+etc-backup-0001 (Имя первого тома
+1 (выбираем EtcPool)
+
+ДЛЯ MYSQL-BACKUP:
+label
+mysql-backup-0001 (Имя первого тома
+2 (выбираем MysqlPool)
+
 Для бэкапа /etc
 run (запуск бэкапа)
 1 (какой бэкап хотим сделать)
