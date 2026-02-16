@@ -631,6 +631,7 @@ interactive-timeout
 
 
 
+Создаём каталог, в котором будут храниться дампы: mkdir -p /var/backups/mysql
 Написание скрипта:
 nano /usr/local/bin/backup-mysql.sh
 #!/bin/bash
@@ -661,9 +662,10 @@ fi
 
 
 Выдаём права доступа на этот файл:
-chmod 777 /usr/local/bin/backup-mysql.sh
-Запускаем скрипт
-bash /usr/local/bin/backup-mysql.sh
+chown -R root:bacula /var/backups/mysql
+chmod 775 /var/backups/mysql
+chown root:bacula /var/log/mysql-backup.log
+chmod 664 /var/log/mysql-backup.log
 
 
 ДАЛЕЕ РАБОТАЕМ НА CLI:
