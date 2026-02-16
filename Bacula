@@ -661,9 +661,9 @@ fi
 
 
 Выдаём права доступа на этот файл:
-chmod +x /usr/local/bin/backup-mysql.sh
-
-
+chmod 777 /usr/local/bin/backup-mysql.sh
+Запускаем скрипт
+bash /usr/local/bin/backup-mysql.sh
 
 
 ДАЛЕЕ РАБОТАЕМ НА CLI:
