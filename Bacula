@@ -661,12 +661,6 @@ fi
 
 
 
-Выдаём права доступа на этот файл:
-chown -R root:bacula /var/backups/mysql
-chmod 775 /var/backups/mysql
-chown root:bacula /var/log/mysql-backup.log
-chmod 664 /var/log/mysql-backup.log
-
 Даём права на исполнение и выполняем вручную:
 chmod +x /usr/local/bin/backup-mysql.sh
 bash /usr/local/bin/backup-mysql.sh
