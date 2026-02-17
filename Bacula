@@ -1,4 +1,4 @@
-Указываем имена машин:
+### Указываем имена машин:
  hostnamectl set-hostname srv
  hostnamectl set-hostname cli
  hostnamectl set-hostname isp
