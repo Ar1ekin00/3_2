@@ -701,6 +701,7 @@ mysqlshow -u root -p webdb
 
 
 
-![Интересная картинка](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png "Схема работы Bacula")
+![Интересная картинка](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png "Схема работы Bacula)
+
 
 
