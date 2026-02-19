@@ -701,4 +701,5 @@ mysqlshow -u root -p webdb
 
 
 
-[alt text](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
