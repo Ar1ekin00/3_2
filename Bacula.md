@@ -654,7 +654,7 @@ mark * (маркируем, какие файлы и каталоги хотим
 done (после маркировки нужных файлов, соглашаемся на восстановление)
 yes (подтверждаем настройки задачи)
 # Проверка
-ls -la /tmp/restored-etc/
+ls -la /tmp/bacula-restored/
 ```
 ### 10. Восстановление базы данных MySQL
 ```bash
@@ -701,3 +701,4 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
