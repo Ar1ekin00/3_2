@@ -30,7 +30,7 @@ exec bash
 #### 1.2. Настройка локальной сети между машинами
 
 ```bash
-# Создаём файлы маршрута по умолчанию, DNS-сервера и настройки конфигурации соответственно  
+# Создаём файлы маршрута по умолчанию, DNS-сервера и настройки конфигурации сетевого адаптера соответственно  
 На SRV и CLI:
 echo default via 192.168.1.1 > /etc/net/ifaces/ens18/ipv4route
 echo nameserver 8.8.8.8 > /etc/net/ifaces/ens18/resolv.conf
@@ -701,5 +701,6 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
