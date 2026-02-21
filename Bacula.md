@@ -159,11 +159,11 @@ EXIT;
 ---
 ### 5. Конфигурация Bacula Director (SRV)
 ```Bash
-# Заходим в директорию с файлами конфигурации всех сервисов Bacula и редактируем:
+# Заходим в директорию с файлами конфигурации всех сервисов Bacula
 cd /etc/bacula
 ```
 
-#### 5.1. Основной конфигурационный файл `/etc/bacula/bacula-dir.conf`
+#### 5.1. Редактируем основной конфигурационный файл `/etc/bacula/bacula-dir.conf`
 
 ```conf
 # Director
@@ -335,7 +335,7 @@ FileSet {
 }
 ```
 
-#### 5.2. Конфигурационный файл File Daemon `/etc/bacula/bacula-fd.conf`
+#### 5.2. Редактируем конфигурационный файл File Daemon `/etc/bacula/bacula-fd.conf`
 ```conf
 Director {
   Name = srv-dir
@@ -368,7 +368,6 @@ sed -i "s/client-password/$FD_PASSWORD/" /etc/bacula/bacula-dir.conf
 # Замена паролей в отдельных файлах
 sed -n '9p' bacula-dir.conf > bacula-dir-password.conf
 sed -n '67p' bacula-dir.conf > bacula-fd-password.conf
-
 ```
 
 ---
@@ -576,6 +575,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
