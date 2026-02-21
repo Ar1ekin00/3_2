@@ -145,10 +145,8 @@ cd /usr/share/bacula/scripts
 ./create_mysql_database
 ./make_mysql_tables
 ./grant_mysql_privileges
-
-# Вход по паролю root - root
-mysql -u root -p
 ```
+
 #### 4.2. Cмена пароля для пользователя bacula и root
 ```Bash
 mysql -u root
@@ -368,10 +366,8 @@ sed -i "s/storage-password/$SD_PASSWORD/" /etc/bacula/bacula-dir.conf
 FD_PASSWORD=$(openssl rand -base64 24)
 sed -i "s/client-password/$FD_PASSWORD/" /etc/bacula/bacula-dir.conf
 # Замена паролей в отдельных файлах
-# На SRV
 sed -n '9p' bacula-dir.conf > bacula-dir-password.conf
 sed -n '67p' bacula-dir.conf > bacula-fd-password.conf
-# 
 
 ```
 
@@ -442,7 +438,7 @@ Storage {
 
 Director {
   Name = srv-dir
-  Password = "storage-password"  # тот же, что в Storage секции на srv
+  Password = "storage-password"  # тот же, что в Storage секции на SRV
 }
 
 Device {
@@ -462,12 +458,11 @@ Messages {
 }
 ```
 
-#### 7.2. В файле с паролем указать тот же, что и в bacula-sd.conf
+#### 7.2. В файле с паролем указать тот же сгенерированный пароль, что и в bacula-sd.conf
 ```Bash
-mcedit bacula-sd-password.conf 
+nano bacula-sd-password.conf 
 Password = "storage-password"
 ```
-
 ---
 
 ### 8. Запуск и проверка работы системы
@@ -541,7 +536,7 @@ ls -la /tmp/bacula-restores/
 # Создание базы данных webdb
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS webdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 # Распаковка дампа
-gunzip -c /var/backups/mysql/webdb_*.sql.gz | mysql -u root -p webdb
+gunzip -c /tmp/bacula-restores/var/backups/mysql/webdb_*.sql.gz | mysql -u root -p webdb
 # Проверка наличия данных в таблице
 mysqlshow -u root -p webdb
 ```
@@ -581,6 +576,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
