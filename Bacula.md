@@ -472,7 +472,6 @@ Password = "storage-password"
 ```bash
 systemctl enable --now bacula-dir.service
 systemctl enable --now bacula-fd.service
-systemctl enable --now bacula-sd.service
 ```
 
 #### 8.2. Запуск сервиса на CLI
@@ -577,6 +576,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
