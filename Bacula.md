@@ -378,6 +378,8 @@ sed -n '67p' bacula-dir.conf > bacula-fd-password.conf
 ```Bash
 # Создание каталога, в котором будут храниться дампы. Дампы будут создаваться при запуске скрипта
 mkdir -p /var/backups/mysql
+# Выдача прав на запись в каталог для bacula
+chown bacula:bacula /var/backups/mysql
 ```
 ```
 # Создать по следующему пути /usr/local/bin
@@ -393,8 +395,6 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 DB_NAME="bacula"
 DB_USER="root"
 DB_PASS="P@ssw0rd"
-
-mkdir -p $BACKUP_DIR
 
 # Создание дампа с сжатием
 mysqldump -u$DB_USER -p$DB_PASS --single-transaction $DB_NAME | \
@@ -414,10 +414,9 @@ fi
 ```
 
 ```Bash
-# Выдача прав на исполнение и выполнение скрипта вручную:
+# Выдача прав на исполнение скрипта 
 chown root:bacula /usr/local/bin/backup-mysql.sh
 chmod 750 /usr/local/bin/backup-mysql.sh
-bash /usr/local/bin/backup-mysql.sh
 ```
 ---
 
@@ -576,6 +575,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
