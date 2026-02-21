@@ -80,7 +80,7 @@ apt-get update
 #### 2.1. На SRV: Установка Director, File Daemon, консоли и Базы Данных MySQL
 ```bash
 # Установка пакетов
-apt-get install -y bacula15-director-common bacula15-director-mysql bacula15-common bacula15-storage bacula15-console bacula15-client bacula15 
+apt-get install -y bacula15-director-common bacula15-director-mysql bacula15-common bacula15-console bacula15-client 
 apt-get install -y mariadb-server mariadb
 ```
 
@@ -88,9 +88,10 @@ apt-get install -y mariadb-server mariadb
 ```bash
 apt-get install -y bacula15-storage
 
-# Создание директории хранения
+# Создание директории хранения бэкапов
 mkdir -p /backup
-chmod 777 /backup
+chmod 750 /backup
+chown bacula:bacula /backup
 ```
 
 #### 2.3. Проверка наличия пакетов
@@ -123,7 +124,8 @@ rpm -qa | grep bacula
 
 **Принципы защиты в архитектуре Bacula:**
 1. **Физическая изоляция** — компонент хранения (Storage Daemon) вынесен на отдельный узел cli
-2. **Политики хранения** — настройка параметров `Recycle = no` и `AutoPrune = no` для критичных заданий
+2. **Разграничение прав** — процессы Bacula работают от имени пользователя `bacula` без прав на запись в защищаемые директории
+3. **Политики хранения** — настройка параметров `Recycle = no` и `AutoPrune = no` для критичных заданий
 4. **Только добавление (Append-only)** — на уровне файловой системы:
    ```bash
    # На cli
@@ -173,7 +175,7 @@ mcedit grant_mysql_privileges
 ./grant_mysql_privileges
 ```
 
-
+---
 ### 5. Конфигурация Bacula Director (SRV)
 ```Bash
 # Заходим в директорию с файлами конфигурации всех Демонов (bconsole, director, file daemon и storage daemon) и редактируем:
@@ -701,6 +703,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
