@@ -174,7 +174,7 @@ Director {
   WorkingDirectory = "/var/lib/bacula"
   PidDirectory = "/var/run/bacula"
   Maximum Concurrent Jobs = 20
-  Password = "director-password" # будет заменен ниже
+  Password = "director-password"
 }
 
 # Каталог MySQL
@@ -222,7 +222,7 @@ Storage {
   Name = cli-sd
   Address = 192.168.1.20
   SDPort = 9103
-  Password = "storage-password" # будет заменен ниже
+  Password = "storage-password"
   Device = cli-sd
   Media Type = File
 }
@@ -232,7 +232,7 @@ Client {
   Name = srv-fd
   Address = 192.168.1.10
   FDPort = 9102
-  Password = "client-password" # будет заменен ниже
+  Password = "client-password"
   Catalog = MyCatalog
 }
 
@@ -265,7 +265,7 @@ Schedule {
   Run = Full daily at 02:00
 }
 
-# JobDefs — базовые параметры (исправлен Bootstrap)
+# JobDefs — базовые параметры
 JobDefs {
   Name = "DefaultJob"
   Type = Backup
@@ -275,7 +275,7 @@ JobDefs {
   Storage = cli-sd
   Messages = Standard
   Priority = 10
-  Write Bootstrap = "/var/lib/bacula/%n.bsr"  # 
+  Write Bootstrap = "/var/lib/bacula/%n.bsr"  
 }
 
 # Job для /etc
@@ -309,7 +309,7 @@ Job {
   RunBeforeJob = "/usr/local/bin/backup-mysql.sh"
 }
 
-# Restore Job (исправлено — убрана циклическая ссылка)
+# Restore Job
 Job {
   Name = "RestoreFiles"
   Type = Restore
@@ -577,6 +577,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
