@@ -427,7 +427,7 @@ bash /usr/local/bin/backup-mysql.sh
 cd /etc/bacula
 ```
 #### 7.1. Файл `/etc/bacula/bacula-sd.conf`
-**Поменять строку "storage-password" на сгенерированный пароль из секции "Storage {" в /etc/bacula/bacula-dir.conf на SRV**
+**Поменять строку "storage-password" на пароль, сгенерированный на SRV. Найдёте его на SRV в файле bacula-dir.conf, в сегменте Storage**
 ```conf
 Storage {
   Name = cli-sd
@@ -576,6 +576,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
