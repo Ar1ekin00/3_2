@@ -458,7 +458,7 @@ Messages {
   director = srv-dir = all
 }
 ```
-**Поменять пароль storage-password на сгенерированный пароль из /etc/bacula/bacula-dir.conf на SRV**
+**Поменять пароль storage-password на сгенерированный пароль из секции "Storage {" /etc/bacula/bacula-dir.conf на SRV**
 #### 7.2. В файле с паролем указать тот же сгенерированный пароль, что и в bacula-sd.conf
 ```Bash
 nano bacula-sd-password.conf 
@@ -577,6 +577,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
