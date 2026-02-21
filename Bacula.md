@@ -106,12 +106,10 @@ rpm -qa | grep mariadb
  mariadb-server-10.6.24-alt1.x86_64
  mariadb-client-10.6.24-alt1.x86_64
 rpm -qa | grep bacula
+ bacula15-director-mysql-15.0.2-alt2.x86_64
  bacula15-director-common-15.0.2-alt2.x86_64
  bacula15-console-15.0.2-alt2.x86_64
  bacula15-common-15.0.2-alt2.x86_64
- bacula15-director-mysql-15.0.2-alt2.x86_64
- bacula15-storage-15.0.2-alt2.x86_64
- bacula15-15.0.2-alt2.x86_64
  bacula15-client-15.0.2-alt2.x86_64
 На CLI:
 rpm -qa | grep bacula
@@ -134,45 +132,29 @@ rpm -qa | grep bacula
 ---
 
 ### 4. Создание и настройка Базы данных MySQL
-Для создания базы данных необходимо отредактировать и запустить 3 скрипта. Дополнительно поменяем пароль для пользователя root в MySQL (MySQL и MariaDB - это одно и тоже).
 
-#### 4.1. Запуск БД и смена пароля
-
+#### 4.1. Запуск БД и создание базы данных Bacula
 ```Bash
 
 # Запуск и проверка работоспособности MySQL
 systemctl enable --now mariadb
 systemctl status mariadb
 
-# Вход в БД и редактирование пароля пользователя
-mysql -u root
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
-FLUSH PRIVILEGES;
-EXIT;
+# Создание базы данных с помощью скриптов (запускать из директории /usr/share/bacula/scripts)
+cd /usr/share/bacula/scripts
+./create_mysql_database
+./make_mysql_tables
+./grant_mysql_privileges
 
 # Вход по паролю root - root
 mysql -u root -p
 ```
-#### 4.2. Редактирование скриптов и создание базы данных
-
-В каталоге /usr/share/bacula/scripts
+#### 4.2. Cмена пароля для пользователя bacula
 ```Bash
-# Редактировать файлы скриптов лучше всего в текстовом редакторе mcedit - в нём показано, на какой строке находится курсор. В самих файлах указываем, за какого пользователя должен активироваться скрипт.
-mcedit create_mysql_database
-12 строка: if $bindir/mysql -u root -p $* -f <<END-OF-DATA
-
-mcedit make_mysql_tables
-26 строка: if mysql -u root -p $* -f <<END-OF-DATA
-
-mcedit grant_mysql_privileges
-11 строка: db_password="root"
-20 строка: if $bindir/mysql $* -u root -p -f 2>/dev/null 1>/dev/null  <<EOD
-30 строка: if $bindir/mysql $* -u root -p -f <<END-OF-DATA
-
-# Создание базы данных с помощью скриптов (запускать из директории /usr/share/bacula/scripts)
-./create_mysql_database
-./make_mysql_tables
-./grant_mysql_privileges
+mysql -u root
+ALTER USER 'bacula'@'localhost' IDENTIFIED BY 'bacula';
+FLUSH PRIVILEGES;
+EXIT;
 ```
 
 ---
@@ -193,18 +175,16 @@ Director {
   WorkingDirectory = "/var/lib/bacula"
   PidDirectory = "/var/run/bacula"
   Maximum Concurrent Jobs = 20
-  Password = "root"
-  TLS Enable = no 
-  TLS Require = no
+  Password = "director-password" # будет заменен ниже
 }
 
 # Каталог MySQL
 Catalog {
   Name = MyCatalog
   dbname = "bacula"
-  dbuser = "root"
-  dbpassword = "root"
-  dbaddress = "localhost"  
+  dbuser = "bacula"
+  dbpassword = "bacula"
+  dbaddress = "localhost"
   dbport = "3306"
 }
 
@@ -243,10 +223,9 @@ Storage {
   Name = cli-sd
   Address = 192.168.1.20
   SDPort = 9103
-  Password = "root"
+  Password = "storage-password" # будет заменен ниже
   Device = cli-sd
   Media Type = File
-  TLS Enable = no
 }
 
 # Client 
@@ -254,12 +233,8 @@ Client {
   Name = srv-fd
   Address = 192.168.1.10
   FDPort = 9102
-  Password = "root"
+  Password = "client-password" # будет заменен ниже
   Catalog = MyCatalog
-  TLS Enable = no
-  TLS PSK Enable = no
-  TLS Require = no
-  TLS Authenticate = no
 }
 
 # FileSet для /etc
@@ -413,68 +388,16 @@ Messages {
   director = dir = all, !skipped, !restored
 }
 ```
-#### 5.3. Конфигурационный файл Storage Daemon `/etc/bacula/bacula-sd.conf`
-```conf
-#
-# Default Bacula Storage Daemon Configuration file
-#
-#  For Bacula release 2.4.4 (28 December 2008) -- redhat 
-#
-# You may need to change the name of your tape drive
-#   on the "Archive Device" directive in the Device
-#   resource.  If you change the Name and/or the 
-#   "Media Type" in the Device resource, please ensure
-#   that dird.conf has corresponding changes.
-#
 
-Storage {                             # definition of myself
-  Name = cli-sd
-  SDPort = 9103                  # Director's port
-  WorkingDirectory = "/var/lib/bacula"
-  Pid Directory = "/var/run/bacula"
-  Maximum Concurrent Jobs = 20
-}
-
-#
-# List Directors who are permitted to contact Storage daemon
-#
-Director {
-  Name = dir
-@/etc/bacula/bacula-sd-password.conf
-}
-
-#
-# Restricted Director, used by tray-monitor to get the
-#   status of the storage daemon
-#
-#Director {
-#  Name = dir-mon
-#  Password = ""
-#  Monitor = yes
-#}
-
-
-@|"sh -c 'for f in /etc/bacula/device.d/*.conf ; do echo @${f} ; done'"
-
-#
-# Send all messages to the Director, 
-# mount messages also are sent to the email address
-#
-Messages {
-  Name = Standard
-  director = dir = all
-}
-```
-#### 5.4. Файлы, содержащие пароли для каждого Демона
-```Bash
-mcedit bacula-dir-password.conf 
-Password = "root"
-
-mcedit bacula-fd-password.conf 
-Password = "root"
-
-mcedit bacula-sd-password.conf 
-Password = "root"
+#### 4.2. Генерация паролей и безопасная настройка
+```bash
+# Генерация надежных паролей и замена их в конфигурации
+DIR_PASSWORD=$(openssl rand -base64 24)
+sed -i "s/director-password/$DIR_PASSWORD/" /etc/bacula/bacula-dir.conf
+SD_PASSWORD=$(openssl rand -base64 24)
+sed -i "s/storage-password/$SD_PASSWORD/" /etc/bacula/bacula-dir.conf
+FD_PASSWORD=$(openssl rand -base64 24)
+sed -i "s/client-password/$FD_PASSWORD/" /etc/bacula/bacula-dir.conf
 ```
 #### 5.5. Изменение конфигурации MySQL-сервера
 На SRV:
@@ -703,6 +626,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
