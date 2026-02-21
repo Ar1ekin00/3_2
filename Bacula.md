@@ -399,15 +399,6 @@ sed -i "s/storage-password/$SD_PASSWORD/" /etc/bacula/bacula-dir.conf
 FD_PASSWORD=$(openssl rand -base64 24)
 sed -i "s/client-password/$FD_PASSWORD/" /etc/bacula/bacula-dir.conf
 ```
-#### 5.5. Изменение конфигурации MySQL-сервера
-На SRV:
-```conf
-# В файле /etc/my.cnf.d/server.cnf отредактировать
-18 строка: port = 3306 
-45 строка: skip-networking = 0 
-136 строка: bind-address = 127.0.0.1 
-systemctl restart mariadb
-```
 
 ---
 ### 6. Создание скрипта /usr/local/bin/backup-mysql.sh
@@ -427,9 +418,9 @@ nano backup-mysql.sh
 #!/bin/bash
 BACKUP_DIR="/var/backups/mysql"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-DB_NAME="bacula"
+DB_NAME="webdb"
 DB_USER="root"
-DB_PASS="root"
+DB_PASS="P@ssw0rd"
 
 mkdir -p $BACKUP_DIR
 
@@ -626,6 +617,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
