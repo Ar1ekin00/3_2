@@ -392,7 +392,7 @@ nano backup-mysql.sh
 #!/bin/bash
 BACKUP_DIR="/var/backups/mysql"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-DB_NAME="bacula"
+DB_NAME="webdb"
 DB_USER="root"
 DB_PASS="P@ssw0rd"
 
@@ -412,7 +412,10 @@ else
   exit 1
 fi
 ```
-
+```
+# Создание базы данных webdb
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS webdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
 ```Bash
 # Выдача прав на исполнение скрипта 
 chown root:bacula /usr/local/bin/backup-mysql.sh
@@ -532,8 +535,6 @@ ls -la /tmp/bacula-restores/
 ```
 ### 10. Восстановление базы данных MySQL
 ```bash
-# Создание базы данных webdb
-mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS webdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 # Распаковка дампа
 gunzip -c /tmp/bacula-restores/var/backups/mysql/webdb_*.sql.gz | mysql -u root -p webdb
 # Проверка наличия данных в таблице
@@ -575,6 +576,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
