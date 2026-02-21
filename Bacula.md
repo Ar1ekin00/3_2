@@ -360,11 +360,13 @@ Messages {
 ```bash
 # Генерация надежных паролей и замена их в главном конфигурационном bacula
 DIR_PASSWORD=$(openssl rand -base64 24)
-sed -i "s/director-password/$DIR_PASSWORD/" /etc/bacula/bacula-dir.conf
+sed -i "s|director-password|$DIR_PASSWORD|" /etc/bacula/bacula-dir.conf
+
 SD_PASSWORD=$(openssl rand -base64 24)
-sed -i "s/storage-password/$SD_PASSWORD/" /etc/bacula/bacula-dir.conf
+sed -i "s|storage-password|$SD_PASSWORD|" /etc/bacula/bacula-dir.conf
+
 FD_PASSWORD=$(openssl rand -base64 24)
-sed -i "s/client-password/$FD_PASSWORD/" /etc/bacula/bacula-dir.conf
+sed -i "s|client-password|$FD_PASSWORD|" /etc/bacula/bacula-dir.conf
 # Замена паролей в отдельных файлах
 sed -n '9p' bacula-dir.conf > bacula-dir-password.conf
 sed -n '67p' bacula-dir.conf > bacula-fd-password.conf
@@ -575,6 +577,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
