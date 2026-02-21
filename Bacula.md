@@ -149,10 +149,11 @@ cd /usr/share/bacula/scripts
 # Вход по паролю root - root
 mysql -u root -p
 ```
-#### 4.2. Cмена пароля для пользователя bacula
+#### 4.2. Cмена пароля для пользователя bacula и root
 ```Bash
 mysql -u root
 ALTER USER 'bacula'@'localhost' IDENTIFIED BY 'bacula';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'P@ssw0rd';
 FLUSH PRIVILEGES;
 EXIT;
 ```
@@ -160,7 +161,7 @@ EXIT;
 ---
 ### 5. Конфигурация Bacula Director (SRV)
 ```Bash
-# Заходим в директорию с файлами конфигурации всех Демонов (bconsole, director, file daemon и storage daemon) и редактируем:
+# Заходим в директорию с файлами конфигурации всех сервисов Bacula и редактируем:
 cd /etc/bacula
 ```
 
@@ -338,39 +339,10 @@ FileSet {
 
 #### 5.2. Конфигурационный файл File Daemon `/etc/bacula/bacula-fd.conf`
 ```conf
-#
-# Default  Bacula File Daemon Configuration file
-#
-#  For Bacula release 2.4.4 (28 December 2008) -- redhat 
-#
-# There is not much to change here except perhaps the
-# File daemon Name to
-#
-
-#
-# List Directors who are permitted to contact this File daemon
-#
 Director {
   Name = srv-dir
-  Password = "root"
-  TLS Enable = no
-  TLS Require = no
-  TLS PSK Enable = no
+@/etc/bacula/bacula-fd-password.conf
 }
-
-#
-# Restricted Director, used by tray-monitor to get the
-#   status of the file daemon
-#
-#Director {
-#  Name = dir-mon
-#  Password = ""
-#  Monitor = yes
-#}
-
-#
-# "Global" File daemon configuration specifications
-#
 
 FileDaemon {                          # this is me
   Name = srv-fd
@@ -378,26 +350,29 @@ FileDaemon {                          # this is me
   WorkingDirectory = /var/lib/bacula
   Pid Directory = /var/run/bacula
   Maximum Concurrent Jobs = 20
-  TLS Enable = no
-  TLS Require = no
 }
 
-# Send all messages except skipped files back to Director
 Messages {
   Name = Standard
   director = dir = all, !skipped, !restored
 }
 ```
 
-#### 4.2. Генерация паролей и безопасная настройка
+#### 5.3. Генерация паролей и безопасная настройка
 ```bash
-# Генерация надежных паролей и замена их в конфигурации
+# Генерация надежных паролей и замена их в главном конфигурационном bacula
 DIR_PASSWORD=$(openssl rand -base64 24)
 sed -i "s/director-password/$DIR_PASSWORD/" /etc/bacula/bacula-dir.conf
 SD_PASSWORD=$(openssl rand -base64 24)
 sed -i "s/storage-password/$SD_PASSWORD/" /etc/bacula/bacula-dir.conf
 FD_PASSWORD=$(openssl rand -base64 24)
 sed -i "s/client-password/$FD_PASSWORD/" /etc/bacula/bacula-dir.conf
+# Замена паролей в отдельных файлах
+# На SRV
+sed -n '9p' bacula-dir.conf > bacula-dir-password.conf
+sed -n '67p' bacula-dir.conf > bacula-fd-password.conf
+# 
+
 ```
 
 ---
@@ -418,7 +393,7 @@ nano backup-mysql.sh
 #!/bin/bash
 BACKUP_DIR="/var/backups/mysql"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-DB_NAME="webdb"
+DB_NAME="bacula"
 DB_USER="root"
 DB_PASS="P@ssw0rd"
 
@@ -443,7 +418,8 @@ fi
 
 ```Bash
 # Выдача прав на исполнение и выполнение скрипта вручную:
-chmod 777 /usr/local/bin/backup-mysql.sh
+chown root:bacula /usr/local/bin/backup-mysql.sh
+chmod 750 /usr/local/bin/backup-mysql.sh
 bash /usr/local/bin/backup-mysql.sh
 ```
 ---
@@ -462,17 +438,11 @@ Storage {
   PidDirectory = "/var/run/bacula"
   Maximum Concurrent Jobs = 20
   SDAddress = 192.168.1.20
-  TLS Enable = no 
-  TLS Require = no
 }
 
 Director {
   Name = srv-dir
-  Password = "root"
-  TLS Enable = no
-  TLS PSK Enable = no
-  TLS Require = no
-  TLS Authenticate = no
+  Password = "storage-password"  # тот же, что в Storage секции на srv
 }
 
 Device {
@@ -483,7 +453,7 @@ Device {
   Random Access = yes
   AutomaticMount = yes
   RemovableMedia = no
-  AlwaysOpen = no
+  AlwaysOpen = yes
 }
 
 Messages {
@@ -492,16 +462,10 @@ Messages {
 }
 ```
 
-#### 7.2. Файлы, содержащие пароли для каждого Демона
+#### 7.2. В файле с паролем указать тот же, что и в bacula-sd.conf
 ```Bash
-mcedit bacula-dir-password.conf 
-Password = "root"
-
-mcedit bacula-fd-password.conf 
-Password = "root"
-
 mcedit bacula-sd-password.conf 
-Password = "root"
+Password = "storage-password"
 ```
 
 ---
@@ -617,6 +581,7 @@ mysqlshow -u root -p webdb
 
 
 ![](https://github.com/Ar1ekin00/Sources/blob/main/MD-3813-2.png)
+
 
 
 
