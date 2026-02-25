@@ -53,3 +53,121 @@ LockPick3 (пароль, который нужно ввести, после пр
 usermod -aG wheel link_guru
 EDITOR=mcedit visudo
 WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
+
+Для PING от BR-SRV и HQ-SRV
+На самих машинах статические IP-адреса.
+ipv4route ipv4address resolv.conf options
+На BR-RTR и HQ-RTR
+BR-RTR(config)#interface int1
+BR-RTR(config-if)#ip address 172.16.30.1/27
+BR-RTR(config-if)#no shutdown 
+Interface int1 cannot change state to up
+BR-RTR(config-if)#exit
+BR-RTR(config)#port te1
+BR-RTR(config-port)#service-instance int1
+BR-RTR(config-service-instance)#encapsulation untagged 
+BR-RTR(config-service-instance)#connect ip interface int1
+
+2026-02-25 08:36:29      INFO      Interface int1 changed state to up
+BR-RTR(config-service-instance)#^D
+BR-RTR(config-port)#^D
+BR-RTR(config)#interface int1
+BR-RTR(config-if)#ip nat inside 
+BR-RTR(config-if)#^D
+BR-RTR(config)#interface int0
+BR-RTR(config-if)#ip nat outside
+BR-RTR(config-if)#exit
+BR-RTR(config)#ip route 0.0.0.0/24 172.16.2.1
+BR-RTR(config)#ip route 0.0.0.0/24 172.16.2.1 16
+BR-RTR(config)#ip nat pool NAT 172.16.30.2-172.16.30.30
+BR-RTR(config)#ip nat source dynamic inside-to-outside pool NAT overload interface gateway
+% Unknown interface
+BR-RTR(config)#ip nat source dynamic inside-to-outside pool NAT overload interface int0
+
+НА HQ-RTR
+hostname HQ-RTR
+!
+!
+hw mgmt ip 192.168.255.1/24
+!
+bgp extended-asn-cap 
+!
+ip vrf management
+!
+class-map default
+!
+security default
+!
+security none vrf management
+!
+mpls propagate-ttl
+mpls label mode per-prefix
+mpls exp stack-size all
+!
+ip domain-lookup
+!
+!
+ip pim register-rp-reachability
+!
+ip route 0.0.0.0/0 172.16.1.1 16
+!
+line con 0
+line vty 0 39
+!
+port te0
+ mtu 9728
+ service-instance int0
+  encapsulation untagged
+!
+port te1
+ mtu 9728
+ service-instance hq.100
+  encapsulation dot1q 100
+  rewrite pop 1
+ service-instance hq.200
+  encapsulation dot1q 200
+  rewrite pop 1
+ service-instance hq.999
+  encapsulation dot1q 999
+  rewrite pop 1
+!
+interface int0
+ ip mtu 1500
+ connect port te0 service-instance int0
+ ip nat outside
+ ip address 172.16.1.2/28
+!
+interface hq.100
+ description to hq.100
+ ip mtu 1500
+ connect port te1 service-instance hq.100
+ ip nat inside
+ ip address 172.16.10.1/28
+!
+interface hq.200
+ description to hq.200
+ ip mtu 1500
+ connect port te1 service-instance hq.200
+ ip nat inside
+ ip address 172.16.20.1/26
+!
+interface hq.999
+ description to hq.999
+ ip mtu 1500
+ connect port te1 service-instance hq.999
+ ip nat inside
+ ip address 172.16.99.1/28
+!
+ip nat pool NAT 172.16.10.2-172.16.10.14
+!
+ip nat source dynamic inside-to-outside pool NAT overload interface int0
+!
+arp request-interval 1
+arp request-number 3
+arp expiration-period 5
+arp solicitation-rate 2
+arp ip-collision-time 8
+arp incomplete-time 60
+!
+end
+
