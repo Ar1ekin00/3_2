@@ -217,3 +217,23 @@ arp incomplete-time 60
 !
 end
 
+НАСТРОЙКА GRE ТУННЕЛЯ НА BR-RTR И HQ-RTR
+BR-RTR:
+configure terminal
+interface tunnel.0
+br-rtr.net06tech.institute(config-if-tunnel)#ip mtu 1400
+br-rtr.net06tech.institute(config-if-tunnel)#ip address 10.0.0.1/30
+br-rtr.net06tech.institute(config-if-tunnel)#ip tunnel 172.16.2.2 172.16.1.2 mode gre
+
+2026-02-25 10:27:19      INFO      Interface tunnel.0 changed state to up
+br-rtr.net06tech.institute(config-if-tunnel)#no shutdown
+
+HQ-RTR:
+configure terminal
+interface tunnel.0
+hq-rtr.net06tech.institute(config-if-tunnel)#ip mtu 1400
+hq-rtr.net06tech.institute(config-if-tunnel)#ip address 10.0.0.2/30
+hq-rtr.net06tech.institute(config-if-tunnel)#ip tunnel 172.16.1.2 172.16.2.2 mode gre
+
+2026-02-25 10:28:24      INFO      Interface tunnel.0 changed state to up
+hq-rtr.net06tech.institute(config-if-tunnel)#no shutdown
