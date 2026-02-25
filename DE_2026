@@ -288,3 +288,19 @@ hq-rtr.net06tech.institute(config)#interface tunnel.0
 hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
 hq-rtr.net06tech.institute(config-if-tunnel)#ip ospf message-digest-key 1 md5 ecorouter
 
+DHCP-SERVER НА HQ-RTR
+hq-rtr.net06tech.institute(config)#ip pool hq-cli 172.16.20.2-172.16.20.62
+hq-rtr.net06tech.institute(config)#dhcp-server 1
+hq-rtr.net06tech.institute(config-dhcp-server)#pool hq-cli 1
+hq-rtr.net06tech.institute(config-dhcp-server-pool)#mask 255.255.255.192
+hq-rtr.net06tech.institute(config-dhcp-server-pool)#gateway 172.16.20.1
+hq-rtr.net06tech.institute(config-dhcp-server-pool)#dns 172.16.1.1
+hq-rtr.net06tech.institute(config-dhcp-server-pool)#domain-name net06tech.institute
+hq-rtr.net06tech.institute(config-dhcp-server-pool)#lease 3600
+hq-rtr.net06tech.institute(config-dhcp-server-pool)#exit
+hq-rtr.net06tech.institute(config-dhcp-server)#exit
+hq-rtr.net06tech.institute(config)#interface hq.200 
+hq-rtr.net06tech.institute(config-if)#dhcp-server 1
+hq-rtr.net06tech.institute(config-if)#exit
+hq-rtr.net06tech.institute(config)#exit
+hq-rtr.net06tech.institute#w
