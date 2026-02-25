@@ -248,6 +248,7 @@ hq-rtr.net06tech.institute(config)#router ospf 1
 hq-rtr.net06tech.institute(config-router)#network 172.16.10.0 0.0.0.15 area 0
 hq-rtr.net06tech.institute(config-router)#network 172.16.20.0 0.0.0.63 area 0
 hq-rtr.net06tech.institute(config-router)#network 172.16.99.0 0.0.0.15 area 0
+hq-rtr.net06tech.institute(config-router)#network 10.0.0.0 0.0.0.3 area 0.0.0.0
 hq-rtr.net06tech.institute(config-router)# passive-interface default
 hq-rtr.net06tech.institute(config-router)# no passive-interface tunnel.0
 
