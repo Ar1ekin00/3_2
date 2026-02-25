@@ -257,3 +257,34 @@ br-rtr.net06tech.institute(config-router)#network 172.16.30.0 0.0.0.31 area 0
 br-rtr.net06tech.institute(config-router)#network 10.0.0.0 0.0.0.3 area 0
 br-rtr.net06tech.institute(config-router)#passive-interface default 
 br-rtr.net06tech.institute(config-router)#no passive-interface tunnel.0
+
+ПАРОЛИ ДЛЯ OSPF
+НА BR-RTR
+br-rtr.net06tech.institute(config)#router ospf 1
+br-rtr.net06tech.institute(config-router)#area 0 authentication message-digest
+br-rtr.net06tech.institute(config-if)#exit
+br-rtr.net06tech.institute(config)#interface int1
+br-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
+br-rtr.net06tech.institute(config-if)#ip ospf message-digest-key 1 md5 ecorouter
+br-rtr.net06tech.institute(config-if)#exit
+br-rtr.net06tech.institute(config)#interface tunnel.0
+br-rtr.net06tech.institute(config-if-tunnel)#ip ospf authentication-key ecorouter
+br-rtr.net06tech.institute(config-if-tunnel)#ip ospf message-digest-key 1 md5 ecorouter
+
+НА HQ-RTR
+hq-rtr.net06tech.institute(config)#interface hq.100
+hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
+hq-rtr.net06tech.institute(config-if)#ip ospf message-digest-key 1 md5 ecorouter
+hq-rtr.net06tech.institute(config-if)#exit
+hq-rtr.net06tech.institute(config)#interface hq.200
+hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
+hq-rtr.net06tech.institute(config-if)#ip ospf message-digest-key 1 md5 ecorouter
+hq-rtr.net06tech.institute(config-if)#exit
+hq-rtr.net06tech.institute(config)#interface hq.999
+hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
+hq-rtr.net06tech.institute(config-if)#ip ospf message-digest-key 1 md5 ecorouter
+hq-rtr.net06tech.institute(config-if)#exit
+hq-rtr.net06tech.institute(config)#interface tunnel.0
+hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
+hq-rtr.net06tech.institute(config-if-tunnel)#ip ospf message-digest-key 1 md5 ecorouter
+
