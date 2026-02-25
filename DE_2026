@@ -304,3 +304,7 @@ hq-rtr.net06tech.institute(config-if)#dhcp-server 1
 hq-rtr.net06tech.institute(config-if)#exit
 hq-rtr.net06tech.institute(config)#exit
 hq-rtr.net06tech.institute#w
+hq-rtr.net06tech.institute(config)#no ip nat source dynamic inside-to-outside pool NAT overload interface int0
+hq-rtr.net06tech.institute(config)#no ip nat pool NAT 172.16.10.2-172.16.10.14
+hq-rtr.net06tech.institute(config)#ip nat pool NAT 172.16.10.2-172.16.10.14,172.16.20.2-172.16.20.62,172.16.99.2-172.16.99.14
+hq-rtr.net06tech.institute(config)#ip nat source dynamic inside-to-outside pool NAT overload interface int0
