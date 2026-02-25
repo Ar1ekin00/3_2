@@ -241,3 +241,18 @@ hq-rtr.net06tech.institute(config-if-tunnel)#ip tunnel 172.16.1.2 172.16.2.2 mod
 
 2026-02-25 10:28:24      INFO      Interface tunnel.0 changed state to up
 hq-rtr.net06tech.institute(config-if-tunnel)#no shutdown
+
+
+ДИНАМИЧЕСКАЯ МАРШРУТИЗАЦИЯ
+hq-rtr.net06tech.institute(config)#router ospf 1
+hq-rtr.net06tech.institute(config-router)#network 172.16.10.0 0.0.0.15 area 0
+hq-rtr.net06tech.institute(config-router)#network 172.16.20.0 0.0.0.63 area 0
+hq-rtr.net06tech.institute(config-router)#network 172.16.99.0 0.0.0.15 area 0
+hq-rtr.net06tech.institute(config-router)# passive-interface default
+hq-rtr.net06tech.institute(config-router)# no passive-interface tunnel.0
+
+br-rtr.net06tech.institute(config)#router ospf 1
+br-rtr.net06tech.institute(config-router)#network 172.16.30.0 0.0.0.31 area 0
+br-rtr.net06tech.institute(config-router)#network 10.0.0.0 0.0.0.3 area 0
+br-rtr.net06tech.institute(config-router)#passive-interface default 
+br-rtr.net06tech.institute(config-router)#no passive-interface tunnel.0
