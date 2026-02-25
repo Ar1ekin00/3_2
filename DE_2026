@@ -59,8 +59,10 @@ EDITOR=mcedit visudo
 WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
 
 Для PING от BR-SRV и HQ-SRV
-На самих машинах статические IP-адреса.
+На самих машинах BR-SRV и HQ-SRV статические IP-адреса.
 ipv4route ipv4address resolv.conf options
+
+Настройте коммутацию в сегменте HQ следующим образом:
 На BR-RTR:
 br-rtr.net06tech.institute#sh ru
 !
@@ -221,6 +223,7 @@ arp incomplete-time 60
 !
 end
 
+Между офисами HQ и BR, на маршрутизаторах HQ-RTR и BR-RTR необходимо сконфигурировать ip туннель:
 НАСТРОЙКА GRE ТУННЕЛЯ НА BR-RTR И HQ-RTR
 BR-RTR:
 configure terminal
@@ -242,7 +245,7 @@ hq-rtr.net06tech.institute(config-if-tunnel)#ip tunnel 172.16.1.2 172.16.2.2 mod
 2026-02-25 10:28:24      INFO      Interface tunnel.0 changed state to up
 hq-rtr.net06tech.institute(config-if-tunnel)#no shutdown
 
-
+Обеспечьте динамическую маршрутизацию на маршрутизаторах HQ-RTR и BR-RTR: сети одного офиса должны быть доступны из другого офиса и наоборот. Для обеспечения динамической маршрутизации используйте link state протокол на усмотрение участника:
 ДИНАМИЧЕСКАЯ МАРШРУТИЗАЦИЯ
 hq-rtr.net06tech.institute(config)#router ospf 1
 hq-rtr.net06tech.institute(config-router)#network 172.16.10.0 0.0.0.15 area 0
@@ -258,6 +261,7 @@ br-rtr.net06tech.institute(config-router)#network 10.0.0.0 0.0.0.3 area 0
 br-rtr.net06tech.institute(config-router)#passive-interface default 
 br-rtr.net06tech.institute(config-router)#no passive-interface tunnel.0
 
+Обеспечьте защиту выбранного протокола посредством парольной защиты:
 ПАРОЛИ ДЛЯ OSPF
 НА BR-RTR
 br-rtr.net06tech.institute(config)#router ospf 1
@@ -288,6 +292,7 @@ hq-rtr.net06tech.institute(config)#interface tunnel.0
 hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
 hq-rtr.net06tech.institute(config-if-tunnel)#ip ospf message-digest-key 1 md5 ecorouter
 
+Настройте протокол динамической конфигурации хостов для сети в сторону HQ-CLI:
 DHCP-SERVER НА HQ-RTR
 hq-rtr.net06tech.institute(config)#ip pool hq-cli 172.16.20.2-172.16.20.62
 hq-rtr.net06tech.institute(config)#dhcp-server 1
@@ -308,3 +313,28 @@ hq-rtr.net06tech.institute(config)#no ip nat source dynamic inside-to-outside po
 hq-rtr.net06tech.institute(config)#no ip nat pool NAT 172.16.10.2-172.16.10.14
 hq-rtr.net06tech.institute(config)#ip nat pool NAT 172.16.10.2-172.16.10.14,172.16.20.2-172.16.20.62,172.16.99.2-172.16.99.14
 hq-rtr.net06tech.institute(config)#ip nat source dynamic inside-to-outside pool NAT overload interface int0
+
+Настройте безопасный удаленный доступ на серверах HQ-SRV и BR-SRV
+• Создайте пользователя link_guru
+• Пароль пользователя link_guru с паролем LockPick3
+• Идентификатор пользователя 2006
+• Пользователь link_guru должен иметь возможность запускать sudo без ввода пароля
+Настраиваем удалённый доступ:
+НА ОБЕИХ МАШИНАХ В ФАЙЛЕ /etc/openssh/sshd_config
+Port 2206
+AllowUsers link_guru
+MaxAuthTries 3
+Banner /etc/openssh/banner.txt
+PasswordAuthentication yes
+
+Создаём файл баннера:
+mcedit /etc/openssh/banner.txt
+Внутри пишем:
+«Authorized access only»
+
+Запускаем sshd
+systemctl enable --now sshd
+
+ТЕПЕРЬ МОЖНО ПРОВЕРИТЬ ПОДКЛЮЧЕНИЕ ПО SSH:
+ssh link_guru@172.16.10.10 -p 2206  #Подключение к HQ-SRV
+ssh link_guru@172.16.30.10 -p 2206  #Подключение к BR-SRV
