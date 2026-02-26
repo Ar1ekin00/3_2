@@ -276,6 +276,8 @@ br-rtr.net06tech.institute(config-if-tunnel)#ip ospf authentication-key ecoroute
 br-rtr.net06tech.institute(config-if-tunnel)#ip ospf message-digest-key 1 md5 ecorouter
 
 НА HQ-RTR
+hq-rtr.net06tech.institute(config)#router ospf 1
+hq-rtr.net06tech.institute(config-router)#area 0 authentication message-digest
 hq-rtr.net06tech.institute(config)#interface hq.100
 hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
 hq-rtr.net06tech.institute(config-if)#ip ospf message-digest-key 1 md5 ecorouter
