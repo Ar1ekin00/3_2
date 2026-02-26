@@ -338,3 +338,42 @@ systemctl enable --now sshd
 ТЕПЕРЬ МОЖНО ПРОВЕРИТЬ ПОДКЛЮЧЕНИЕ ПО SSH:
 ssh link_guru@172.16.10.10 -p 2206  #Подключение к HQ-SRV
 ssh link_guru@172.16.30.10 -p 2206  #Подключение к BR-SRV
+
+dnsmasq для altlinux
+ 
+apt-get install dnsmasq 
+ 
+Отредактируйте файл /etc/sysconfig/dnsmasq (если его нет, создайте):
+bash
+# Отключаем автоматическое обновление resolv.conf хелпером
+USE_RESOLV_CONF="no"
+ 
+ 
+EDITOR=mcedit systemctl edit dnsmasq.service 
+и вставьте туда:
+[Service]
+ExecStart=
+ExecStart=/usr/sbin/dnsmasq -k --user=root --pid-file=/run/dnsmasq.pid
+ 
+ 
+systemctl daemon-reload
+systemctl start dnsmasq
+ 
+ 
+mcedit /etc/resolv.conf
+ 
+nameserver 127.0.0.1
+ 
+ 
+mcedit /etc/dnsmasq.conf
+ 
+no-resolv
+interface=lo
+interface=ens18
+bind-interfaces
+server=8.8.8.8
+server=8.8.4.4
+cache-size=1000
+ 
+#####
+ЧТОБЫ ДОБАВИТЬ КАСТОМНОЕ РАЗРЕШЕНИЕ ИМЕНИ ДОБАВЬТЕ ЕГО В /etc/hosts
