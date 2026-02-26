@@ -359,7 +359,7 @@ ExecStart=/usr/sbin/dnsmasq -k --user=root --pid-file=/run/dnsmasq.pid
  
  
 systemctl daemon-reload
-systemctl start dnsmasq
+systemctl enable --now dnsmasq
  
  
 mcedit /etc/resolv.conf
