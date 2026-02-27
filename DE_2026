@@ -386,3 +386,16 @@ cache-size=1000
 172.16.2.1 web.net06tech.institute
 172.16.1.2 hq-rtr.net06tech.institute
 172.16.2.2 br-rtr.net06tech.institute
+
+НАСТРОЙКА ВРЕМЕНИ НА МАРШРУТИЗАТОРАХ:
+hq-rtr.net06tech.institute#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+hq-rtr.net06tech.institute(config)#ntp timezone utc
+hq-rtr.net06tech.institute(config)#exit
+hq-rtr.net06tech.institute#
+hq-rtr.net06tech.institute#sh ntp da
+
+
+НА СЕРВЕРАХ И КЛИЕНТЕ:
+[root@br-srv ~]# timedatectl set-timezone 'Asia/Yekaterinburg'
+[root@br-srv ~]# date
