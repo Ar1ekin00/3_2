@@ -390,7 +390,7 @@ cache-size=1000
 НАСТРОЙКА ВРЕМЕНИ НА МАРШРУТИЗАТОРАХ:
 hq-rtr.net06tech.institute#conf t
 Enter configuration commands, one per line.  End with CNTL/Z.
-hq-rtr.net06tech.institute(config)#ntp timezone utc
+hq-rtr.net06tech.institute(config)#ntp timezone utc+5
 hq-rtr.net06tech.institute(config)#exit
 hq-rtr.net06tech.institute#
 hq-rtr.net06tech.institute#sh ntp da
