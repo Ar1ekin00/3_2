@@ -394,8 +394,12 @@ hq-rtr.net06tech.institute(config)#ntp timezone utc+5
 hq-rtr.net06tech.institute(config)#exit
 hq-rtr.net06tech.institute#
 hq-rtr.net06tech.institute#sh ntp da
+Если не совпадает, пиши вручную
+hq-rtr.net06tech.institute(config)#ntp date 2026.02.27 13:40
 
 
 НА СЕРВЕРАХ И КЛИЕНТЕ:
 [root@br-srv ~]# timedatectl set-timezone 'Asia/Yekaterinburg'
 [root@br-srv ~]# date
+Если время не совпадает, пиши вручную
+timedatectl --set-time "2017-09-06 20:43:36"	
