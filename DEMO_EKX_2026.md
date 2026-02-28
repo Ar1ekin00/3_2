@@ -1,3 +1,11 @@
+# Образец задания для ГИА ДЭ ПУ (инвариантная часть)
+---
+## Топология сети
+![](https://github.com/Ar1ekin00/Sources/blob/main/network_topology.jpg)
+
+
+---
+## Модуль 1. Настройка сетевой инфраструктуры
 ### 1. НАСТРОЙКА ISP
 #### 1.1 Настройка полного доменного имени, часового пояса
 ```bash
@@ -42,6 +50,8 @@ iptables-save -f /etc/sysconfig/iptables
 systemctl enable --now iptables
 systemctl restart network
 ```
+
+---
 
 ### 2. НАСТРОЙКА HQ-RTR
 #### 2.1 Настройка полного доменного имени, часового пояса
@@ -200,16 +210,7 @@ exit
 w
 ```
 
-
-
-
-
-
-
-
-
-
-
+---
 
 ### 3. НАСТРОЙКА BR-RTR
 
@@ -304,6 +305,8 @@ exit
 w
 ```
 
+---
+
 ### 4. НАСТРОЙКА HQ-CLI
 #### 4.1 Перезагрузка сети, установка часового пояса и времени
 ```bash
@@ -318,8 +321,124 @@ exec bash
 apt-get update
 apt-get install tzdata
 timedatectl set-timezone 'Asia/Yekaterinburg'
-
-# Проверка времени и имени
-date
-cat /etc/hostname
 ```
+
+---
+
+### 5. НАСТРОЙКА HQ-SRV
+#### 5.1 Настройка сети, имени, часового пояса
+```bash
+# Настройка сетевого интерфейса
+cd /etc/net/ifaces/
+echo 192.168.10.2/29 > ens18/ipv4address
+echo BOOTPROTO=static > ens18/options
+echo TYPE=eth >> ens18/options
+echo default via 192.168.10.1 > ens18/ipv4route
+echo nameserver 8.8.8.8 > ens18/resolv.conf
+systemctl restart network
+
+# Имя 
+hostnamectl set-hostname hq-srv.net01tech.institute
+exec bash
+
+# Часовой пояс
+apt-get update
+apt-get install tzdata
+timedatectl set-timezone 'Asia/Yekaterinburg'
+```
+#### 5.2 Создание пользователя, настройка прав
+```bash
+useradd -u 2001 -m -s /bin/bash remote_admin
+passwd remote_admin
+# Пароль, который нужно ввести, после предыдущей команды
+SuperPass!1 
+usermod -aG wheel remote_admin
+apt-get install sudo 
+EDITOR=mcedit visudo
+# Добавить в начало файла
+WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
+```
+
+#### 5.3 Безопасный удалённый дооступ
+```bash
+# Настройка SSH
+mcedit /etc/openssh/sshd_config
+Port 2201
+AllowUsers remote_admin
+MaxAuthTries 2
+Banner /etc/openssh/banner.txt
+PasswordAuthentication yes
+
+# Создание баннера
+mcedit /etc/openssh/banner.txt
+Внутри пишем:
+«Authorized access only»
+
+# Запуск sshd
+systemctl enable --now sshd
+
+# Проверка подключения
+ssh remote_admin@192.168.30.2 -p 2206  #Подключение к BR-SRV
+```
+
+### 6. НАСТРОЙКА BR-SRV
+#### 6.1 Настройка сети, имени, часового пояса
+```bash
+# Настройка сетевого интерфейса
+cd /etc/net/ifaces/
+echo 192.168.30.2/29 > ens18/ipv4address
+echo BOOTPROTO=static > ens18/options
+echo TYPE=eth >> ens18/options
+echo default via 192.168.30.1 > ens18/ipv4route
+echo nameserver 8.8.8.8 > ens18/resolv.conf
+systemctl restart network
+
+# Имя 
+hostnamectl set-hostname br-srv.net01tech.institute	
+exec bash
+
+# Часовой пояс
+apt-get update
+apt-get install tzdata
+timedatectl set-timezone 'Asia/Yekaterinburg'
+```
+
+#### 6.2 Создание пользователя, настройка прав
+```bash
+useradd -u 2001 -m -s /bin/bash remote_admin
+passwd remote_admin
+# Пароль, который нужно ввести, после предыдущей команды
+SuperPass!1 
+usermod -aG wheel remote_admin
+apt-get install sudo 
+EDITOR=mcedit visudo
+# Добавить в начало файла
+WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
+```
+
+#### 6.3 Безопасный удалённый дооступ
+```bash
+# Настройка SSH
+mcedit /etc/openssh/sshd_config
+Port 2201
+AllowUsers remote_admin
+MaxAuthTries 2
+Banner /etc/openssh/banner.txt
+PasswordAuthentication yes
+
+# Создание баннера
+mcedit /etc/openssh/banner.txt
+Внутри пишем:
+«Authorized access only»
+
+# Запуск sshd
+systemctl enable --now sshd
+```
+
+### 7. Проверка работы удаленного подключения
+```bash
+# На CLI
+ssh remote_admin@192.168.10.2 -p 2206  #Подключение к BR-SRV
+ssh remote_admin@192.168.30.2 -p 2206  #Подключение к BR-SRV
+```
+
