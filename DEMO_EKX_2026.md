@@ -1,6 +1,4 @@
 ### 1. НАСТРОЙКА ISP
-Сразу настроем на ISP всё, что нужно и больше к нему не возвращаемся.
-
 #### 1.1 Настройка полного доменного имени, часового пояса
 ```bash
 # Имя 
@@ -46,7 +44,6 @@ systemctl restart network
 ```
 
 ### 2. НАСТРОЙКА HQ-RTR
-
 #### 2.1 Настройка полного доменного имени, часового пояса
 ```bash
 # Имя
@@ -305,4 +302,24 @@ ip ospf message-digest-key 1 md5 ecorouter
 exit
 exit
 w
+```
+
+### 4. НАСТРОЙКА HQ-CLI
+#### 4.1 Перезагрузка сети, установка часового пояса и времени
+```bash
+# Перезагрузить сеть
+systemctl restart network
+
+# Имя 
+hostnamectl set-hostname hq-cli.net01tech.institute
+exec bash
+
+# Часовой пояс
+apt-get update
+apt-get install tzdata
+timedatectl set-timezone 'Asia/Yekaterinburg'
+
+# Проверка времени и имени
+date
+cat /etc/hostname
 ```
