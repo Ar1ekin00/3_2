@@ -388,6 +388,10 @@ hq-rtr.net06tech.institute(config-if-tunnel)#ip tunnel 172.16.1.2 172.16.2.2 mod
 2026-02-25 10:28:24      INFO      Interface tunnel.0 changed state to up
 hq-rtr.net06tech.institute(config-if-tunnel)#no shutdown
 
+
+
+
+
 Обеспечьте динамическую маршрутизацию на маршрутизаторах HQ-RTR и BR-RTR: сети одного офиса должны быть доступны из другого офиса и наоборот. Для обеспечения динамической маршрутизации используйте link state протокол на усмотрение участника:
 ДИНАМИЧЕСКАЯ МАРШРУТИЗАЦИЯ
 hq-rtr.net06tech.institute(config)#router ospf 1
@@ -403,6 +407,9 @@ br-rtr.net06tech.institute(config-router)#network 172.16.30.0 0.0.0.31 area 0
 br-rtr.net06tech.institute(config-router)#network 10.0.0.0 0.0.0.3 area 0
 br-rtr.net06tech.institute(config-router)#passive-interface default 
 br-rtr.net06tech.institute(config-router)#no passive-interface tunnel.0
+
+
+
 
 Обеспечьте защиту выбранного протокола посредством парольной защиты:
 ПАРОЛИ ДЛЯ OSPF
@@ -437,6 +444,11 @@ hq-rtr.net06tech.institute(config)#interface tunnel.0
 hq-rtr.net06tech.institute(config-if)#ip ospf authentication-key ecorouter
 hq-rtr.net06tech.institute(config-if-tunnel)#ip ospf message-digest-key 1 md5 ecorouter
 
+
+
+
+
+
 Настройте протокол динамической конфигурации хостов для сети в сторону HQ-CLI:
 DHCP-SERVER НА HQ-RTR
 hq-rtr.net06tech.institute(config)#ip pool hq-cli 172.16.20.2-172.16.20.62
@@ -458,6 +470,14 @@ hq-rtr.net06tech.institute(config)#no ip nat source dynamic inside-to-outside po
 hq-rtr.net06tech.institute(config)#no ip nat pool NAT 172.16.10.2-172.16.10.14
 hq-rtr.net06tech.institute(config)#ip nat pool NAT 172.16.10.2-172.16.10.14,172.16.20.2-172.16.20.62,172.16.99.2-172.16.99.14
 hq-rtr.net06tech.institute(config)#ip nat source dynamic inside-to-outside pool NAT overload interface int0
+
+
+
+
+
+
+
+
 
 Настройте безопасный удаленный доступ на серверах HQ-SRV и BR-SRV
 • Создайте пользователя link_guru
