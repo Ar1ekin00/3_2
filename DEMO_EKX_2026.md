@@ -372,7 +372,7 @@ mcedit /etc/openssh/sshd_config
 # Добавить в начало файла
 Port 2201
 AllowUsers remote_admin
-MaxAuthTries 2
+MaxAuthTries 3
 Banner /etc/openssh/banner.txt
 PasswordAuthentication yes
 
@@ -436,7 +436,7 @@ mcedit /etc/openssh/sshd_config
 # Добавить в начало файла
 Port 2201
 AllowUsers remote_admin
-MaxAuthTries 2
+MaxAuthTries 3
 Banner /etc/openssh/banner.txt
 PasswordAuthentication yes
 
