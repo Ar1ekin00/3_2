@@ -544,6 +544,8 @@ apt-get install bind-utils -y
 # Проверка на CLI, BR-SRV и HQ-SRV
 ping <полное доменное имя любой машины> или <IP-адрес>
 nslookup <полное доменное имя любой машины> или <IP-адрес>
+
+# Если на CLI не обновляется DNS-сервер - удалить каталог ens18 на CLI - выключить CLI и HQ-RTR - включить машины - создать каталог ens18 и файл options заново " mkdir ens18 && echo BOOTPROTO=dhcp > ens18/options && echo TYPE=eth >> ens18/options " - перезагрузить сеть " systemctl restart network "
 ```
 
 #### 9.2 Какой должен быть вывод
