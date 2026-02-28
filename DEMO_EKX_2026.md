@@ -231,7 +231,7 @@ exit
 show ntp date
 ```
 
-#### 2.2 Настройка логических интерфейсов и сопряжение их с физическими портами
+#### 3.2 Настройка логических интерфейсов и сопряжение их с физическими портами
 ```bash
 # Настройка интерфейса в сторону ISP 
 conf t
@@ -272,7 +272,7 @@ ip nat pool NAT 192.168.30.1-192.168.255.254
 ip nat source dynamic inside-to-outside pool NAT overload interface int0
 ```
 
-#### 2.3 Настройка GRE-туннель 
+#### 3.3 Настройка GRE-туннель 
 ```bash
 interface tunnel.0
 ip mtu 1400
@@ -282,7 +282,7 @@ no shutdown
 exit
 ```
 
-#### 2.4 Настройка динамической маршрутизации (OSPF) на BR-RTR
+#### 3.4 Настройка динамической маршрутизации (OSPF) на BR-RTR
 ```bash
 router ospf 1
 network 192.168.30.0 0.0.0.7 area 0
@@ -293,7 +293,7 @@ area 0 authentication message-digest
 exit
 ```
 
-#### 2.5 Установка пароля на OSPF
+#### 3.5 Установка пароля на OSPF
 ```bash
 interface int1
 ip ospf authentication-key ecorouter
@@ -302,4 +302,7 @@ exit
 interface tunnel.0
 ip ospf authentication-key ecorouter
 ip ospf message-digest-key 1 md5 ecorouter
+exit
+exit
+w
 ```
