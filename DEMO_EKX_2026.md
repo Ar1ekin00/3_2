@@ -452,7 +452,118 @@ systemctl enable --now sshd
 ### 7. Проверка работы удаленного подключения
 ```bash
 # На CLI
-ssh remote_admin@192.168.10.2 -p 2201  #Подключение к BR-SRV
+ssh remote_admin@192.168.10.2 -p 2201  #Подключение к HQ-SRV
 ssh remote_admin@192.168.30.2 -p 2201  #Подключение к BR-SRV
 ```
 
+### 8. Настройка DNS-сервера на HQ-SRV
+```bash
+# Установка пакета
+apt-get install dnsmasq 
+
+# Настройка dnsmasq
+mcedit /etc/sysconfig/dnsmasq
+
+# В файле отключаем автоматическое обновление resolv.conf хелпером
+USE_RESOLV_CONF="no"
+
+# Редактирование файла
+EDITOR=mcedit systemctl edit dnsmasq.service 
+
+# Добавить
+[Service]
+ExecStart=
+ExecStart=/usr/sbin/dnsmasq -k --user=root --pid-file=/run/dnsmasq.pid
+ 
+# Запуск 
+systemctl daemon-reload
+systemctl enable --now dnsmasq
+ 
+# Редактирование файла
+mcedit /etc/resolv.conf
+
+# Добавить, если нет
+nameserver 127.0.0.1
+ 
+# Редактирование файла
+mcedit /etc/dnsmasq.conf
+
+# Добавить в файл:
+
+# Есть в файле, но закомментированы 
+no-resolv
+interface=*
+bind-interfaces
+
+# Можно указать только 8.8.8.8
+server=77.88.8.7
+server=77.88.8.3
+
+# Две настройки ниже указаны по умолчанию, но стоит перепроверить
+expand-hosts
+localise-queries
+
+domain=net01tech.institute
+address=/hq-rtr.net01tech.institute/10.0.0.2
+address=/br-rtr.net01tech.institute/10.0.0.1
+address=/hq-srv.net01tech.institute/192.168.10.2
+address=/hq-cli.net01tech.institute/192.168.20.2
+address=/br-srv.net01tech.institute/192.168.30.2
+address=/docker.net01tech.institute/172.16.1.1
+address=/web.net01tech.institute/172.16.2.1
+
+ptr-record=2.0.0.10.in-addr.arpa,hq-rtr.net01tech.institute
+ptr-record=2.10.168.192.in-addr.arpa,hq-srv.net01tech.institute
+ptr-record=2.20.168.192.in-addr.arpa,hq-cli.net01tech.institute
+
+# Перезагрузить сервис
+systemctl restart dnsmasq
+```
+
+### 9. Проверка работы DNS-сервера
+#### 9.1 Изменение DNS-сервера на машинах сети, установка ПО для проверки
+```bash
+# На BR-SRV поменять в файле resolv.conf
+nameserver 192.168.10.2
+
+# На HQ-RTR поменять в 
+en
+conf t
+dhcp-server 1
+pool hq-cli 1
+no dns 8.8.8.8
+dns 192.168.10.2
+exit
+exit
+exit
+w
+
+# Скачать пакет с nslookup на BR-SRV, HQ-SRV, HQ-CLI
+apt-get install bind-utils -y
+
+# Проверка на CLI, BR-SRV и HQ-SRV
+ping <полное доменное имя любой машины> или <IP-адрес>
+nslookup <полное доменное имя любой машины> или <IP-адрес>
+```
+
+#### 9.2 Какой должен быть вывод
+```bash
+hq-cli ifaces # nslookup br-rtr.net01tech.institute
+Server:         192.168.10.2
+Address:        192.168.10.2#53
+
+Name:   br-rtr.net01tech.institute
+Address: 10.0.0.1
+
+hq-cli ifaces # nslookup 192.168.10.2
+2.10.168.192.in-addr.arpa       name = hq-srv.net01tech.institute.
+
+hq-cli ifaces # nslookup 192.168.20.2
+2.20.168.192.in-addr.arpa       name = hq-cli.net01tech.institute.
+
+hq-cli ifaces # ping br-rtr.net01tech.institute
+PING br-rtr.net01tech.institute (10.0.0.1) 56(84) bytes of data.
+64 bytes from 10.0.0.1 (10.0.0.1): icmp_seq=1 ttl=63 time=23.0 ms
+64 bytes from 10.0.0.1 (10.0.0.1): icmp_seq=2 ttl=63 time=22.8 ms
+64 bytes from 10.0.0.1 (10.0.0.1): icmp_seq=3 ttl=63 time=22.6 ms
+```
