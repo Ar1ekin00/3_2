@@ -21,6 +21,38 @@
 • На ISP настройте динамическую сетевую трансляцию портов для доступа к сети Интернет HQ-RTR и BR-RTR.
 (ПРОСТО СЕТЕВЫЕ АДАПТЕРЫ И IPTABLES НА ISP НАСТРАИВАЕШЬ)
 
+interface HQ.100
+ip address 172.16.10.1/28
+ip nat inside
+port te1
+service-instance te1/HQ.100
+encapsulation dot1q 100
+rewrite pop 1
+connect ip interface HQ.100
+end
+conf t
+interface HQ.200
+ip address 172.16.20.1/28
+ip nat inside
+port te1
+service-instance te1/HQ.200
+encapsulation dot1q 200
+rewrite pop 1
+connect ip interface HQ.200
+end
+conf t
+end
+conf t
+interface HQ.999
+ip address 172.16.99.1/28
+ip nat inside
+port te1
+service-instance te1/HQ.999
+encapsulation dot1q 999
+rewrite pop 1
+connect ip interface HQ.999
+end
+wr
 
 Устройство	Интерфейс	IP-адрес	Маска	VLAN	Подсеть	Шлюз
 ISP	ens18	DHCP	DHCP	-	DHCP	DHCP
