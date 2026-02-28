@@ -452,7 +452,7 @@ systemctl enable --now sshd
 ### 7. Проверка работы удаленного подключения
 ```bash
 # На CLI
-ssh remote_admin@192.168.10.2 -p 2206  #Подключение к BR-SRV
-ssh remote_admin@192.168.30.2 -p 2206  #Подключение к BR-SRV
+ssh remote_admin@192.168.10.2 -p 2201  #Подключение к BR-SRV
+ssh remote_admin@192.168.30.2 -p 2201  #Подключение к BR-SRV
 ```
 
