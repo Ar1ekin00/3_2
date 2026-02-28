@@ -348,13 +348,18 @@ timedatectl set-timezone 'Asia/Yekaterinburg'
 ```
 #### 5.2 Создание пользователя, настройка прав
 ```bash
+# Создание пользователя
 useradd -u 2001 -m -s /bin/bash remote_admin
 passwd remote_admin
+
 # Пароль, который нужно ввести, после предыдущей команды
-SuperPass!1 
+SuperPass!1
+
+# Настройка прав
 usermod -aG wheel remote_admin
 apt-get install sudo 
 EDITOR=mcedit visudo
+
 # Добавить в начало файла
 WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
 ```
@@ -363,6 +368,8 @@ WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
 ```bash
 # Настройка SSH
 mcedit /etc/openssh/sshd_config
+
+# Добавить в начало файла
 Port 2201
 AllowUsers remote_admin
 MaxAuthTries 2
@@ -405,13 +412,18 @@ timedatectl set-timezone 'Asia/Yekaterinburg'
 
 #### 6.2 Создание пользователя, настройка прав
 ```bash
+# Создание пользователя
 useradd -u 2001 -m -s /bin/bash remote_admin
 passwd remote_admin
+
 # Пароль, который нужно ввести, после предыдущей команды
 SuperPass!1 
+
+# Настройка прав
 usermod -aG wheel remote_admin
 apt-get install sudo 
 EDITOR=mcedit visudo
+
 # Добавить в начало файла
 WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
 ```
@@ -420,6 +432,8 @@ WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL
 ```bash
 # Настройка SSH
 mcedit /etc/openssh/sshd_config
+
+# Добавить в начало файла
 Port 2201
 AllowUsers remote_admin
 MaxAuthTries 2
