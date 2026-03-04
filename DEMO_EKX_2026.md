@@ -270,18 +270,6 @@ exit
 
 #### 2.5 Установка пароля на OSPF
 ```bash
-interface int1.100
-ip ospf authentication-key ecorouter
-ip ospf message-digest-key 1 md5 ecorouter
-exit
-interface int1.200
-ip ospf authentication-key ecorouter
-ip ospf message-digest-key 1 md5 ecorouter
-exit
-interface int1.999
-ip ospf authentication-key ecorouter
-ip ospf message-digest-key 1 md5 ecorouter
-exit
 interface tunnel.0
 ip ospf authentication-key ecorouter
 ip ospf message-digest-key 1 md5 ecorouter
@@ -390,10 +378,6 @@ exit
 
 #### 3.5 Установка пароля на OSPF
 ```bash
-interface int1
-ip ospf authentication-key ecorouter
-ip ospf message-digest-key 1 md5 ecorouter
-exit
 interface tunnel.0
 ip ospf authentication-key ecorouter
 ip ospf message-digest-key 1 md5 ecorouter
