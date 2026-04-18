@@ -40,7 +40,8 @@
 - Включите IP-форвардинг на `isp` и настройте базовую трансляцию сетевых адресов (NAT/Masquerade), обеспечив доступ внутренних узлов к сети Интернет.
 - Убедитесь в физической и логической связности узлов на уровне L3. Проверьте базовую маршрутизацию и доступность внешних ресурсов.
 
-**Для isp:**
+### Для isp:
+**Команды:**
 ```bash
 hostnamectl set-hostname isp.lab.local
 exec bash
@@ -53,10 +54,16 @@ echo TYPE=eth >> options
 apt-get update
 apt-get install -y iptables nano
 ```
-В файле:
+*В файле:*
+```bash
 nano /etc/net/sysctl.conf
-отредачить:
+```
+*Записать:*
+```bash
 net.ipv4.ip_forward = 1
+```
+
+**Команды:**
 ```bash
 sysctl -p
 iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
@@ -64,7 +71,9 @@ iptables-save -f /etc/sysconfig/iptables
 systemctl enable --now iptables
 systemctl restart network
 ```
-**Для dc:**
+
+### Для dc:
+**Команды:**
 ```bash
 hostnamectl set-hostname dc.lab.local
 exec bash
@@ -74,7 +83,8 @@ cd enp0s3
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
 ```
-**Для srv:**
+### Для srv:
+**Команды:**
 ```bash
 hostnamectl set-hostname srv.lab.local
 exec bash
@@ -84,7 +94,8 @@ cd enp0s3
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
 ```
-**Для cli:**
+### Для cli:
+**Команды:**
 ```bash
 hostnamectl set-hostname cli.lab.local
 exec bash
@@ -104,20 +115,28 @@ echo TYPE=eth >> options
 - Захарденьте конфигурацию SSH-сервера на всех узлах: измените порт прослушивания на `2222`, установите текстовый баннер «Authorized access only», ограничьте количество попыток аутентификации до двух за сессию, запретите прямой вход под учётной записью `root`, разрешите подключение по SSH исключительно для пользователей `admin` и `monitor`.
 - Проверьте удалённое подключение с `cli` ко всем серверам по новому порту с использованием созданных учётных записей.
 
-**Для isp:**
+### Для isp:
+**Команды:**
 ```bash
 apt-get install -y dhcp-server 
 cd /etc/dhcp/
+```
 
-В файле:
-/etc/sysconfig/dhcpd
-Записать:
+*В файле:*
+```bash
+nano /etc/sysconfig/dhcpd
+```
+*Записать:*
+```bash
 DHCPDARGS=enp0s8
+```
 
-
-В файле:
+*В файле:*
+```bash
 nano dhcpd.conf
-Записать:
+```
+*Записать:*
+```bash
 ddns-update-style none;
 subnet 172.16.0.0 netmask 255.255.255.0 {
   option routers 172.16.0.1;
@@ -138,7 +157,9 @@ host dc {
 hardware ethernet 08:00:27:2b:2a:a6;
 fixed-address 172.16.0.10;
 }
-
+```
+**Команды:**
+```bash
 dhcpd -t
 systemctl restart dhcpd
 systemctl enable --now dhcpd
@@ -149,16 +170,22 @@ echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
 echo "monitor:P@ssw0rd" | chpasswd
 chmod 4755 /usr/bin/sudo
+```
 
-В файле:
+*В файле:*
+```bash
 EDITOR=nano visudo
-Записать:
+```
+*Записать:*
+```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
 monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
-
-В файле:
+```
+*В файле:*
+```bash
 nano /etc/openssh/sshd_config
-Записать:
+*Записать:*
+```bash
 Port 2222
 Banner /etc/openssh/banner.txt
 MaxAuthTries 2
@@ -166,13 +193,16 @@ PermitRootLogin no
 AllowUsers monitor admin
 PubkeyAuthentication yes
 PasswordAuthentication yes 
-
+```
+**Команды:**
+```bash
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
 ```
 
-**Для dc:**
+### Для dc:
+**Команды:**
 ```bash
 systemctl restart network
 apt-get update
@@ -182,16 +212,23 @@ echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
 echo "monitor:P@ssw0rd" | chpasswd
 chmod 4755 /usr/bin/sudo
-
-В файле:
+```
+*В файле:*
+```bash
 EDITOR=nano visudo
-Записать:
+```
+*Записать:*
+```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
 monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+```
 
-В файле:
+*В файле:*
+```bash
 nano /etc/openssh/sshd_config
-Записать:
+```
+*Записать:*
+```bash
 Port 2222
 Banner /etc/openssh/banner.txt
 MaxAuthTries 2
@@ -199,13 +236,16 @@ PermitRootLogin no
 AllowUsers monitor admin
 PubkeyAuthentication yes
 PasswordAuthentication yes 
-
+```
+**Команды:**
+```bash
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
 ```
 
-**Для srv:**
+### Для srv:
+**Команды:**
 ```bash
 systemctl restart network
 apt-get update
@@ -215,16 +255,19 @@ echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
 echo "monitor:P@ssw0rd" | chpasswd
 chmod 4755 /usr/bin/sudo
-
+```
 В файле:
 EDITOR=nano visudo
 Записать:
 admin ALL=(root:ALL) NOPASSWD: ALL
 monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
 
-В файле:
+*В файле:*
+```bash
 nano /etc/openssh/sshd_config
-Записать:
+```
+*Записать:*
+```bash
 Port 2222
 Banner /etc/openssh/banner.txt
 MaxAuthTries 2
@@ -232,13 +275,16 @@ PermitRootLogin no
 AllowUsers monitor admin
 PubkeyAuthentication yes
 PasswordAuthentication yes 
-
+```
+**Команды:**
+```bash
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
 ```
 
-**Для cli:**
+### Для cli:
+**Команды:**
 ```bash
 systemctl restart network
 apt-get update
@@ -248,16 +294,22 @@ echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
 echo "monitor:P@ssw0rd" | chpasswd
 chmod 4755 /usr/bin/sudo
-
-В файле:
+```
+*В файле:*
+```bash
 EDITOR=nano visudo
-Записать:
+```
+*Записать:*
+```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
 monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
-
-В файле:
+```
+*В файле:*
+```bash
 nano /etc/openssh/sshd_config
-Записать:
+```
+*Записать:*
+```bash
 Port 2222
 Banner /etc/openssh/banner.txt
 MaxAuthTries 2
@@ -265,7 +317,9 @@ PermitRootLogin no
 AllowUsers monitor admin
 PubkeyAuthentication yes
 PasswordAuthentication yes 
-
+```
+**Команды:**
+```bash
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
@@ -280,16 +334,20 @@ systemctl restart sshd
 - Напишите плейбук `install_htop.yml`, целью которого является установка пакета `htop` на все узлы группы `servers`.
 - Запустите плейбук и зафиксируйте успешное выполнение задачи на всех целевых серверах. Проверьте связность командой `ansible all -m ping`.
 
-**Для cli:**
+### Для cli:
+**Команды:**
 ```bash
 ssh-keygen
 ssh-copy-id -p 2222 admin@172.16.0.1
 ssh-copy-id -p 2222 admin@172.16.0.10
 ssh-copy-id -p 2222 admin@172.16.0.20
-
-В файле:
+```
+*В файле:*
+```bash
 nano ~/.ssh/config
-Записать:
+```
+*Записать:*
+```bash
 Host isp
 Hostname 172.16.0.1
 Port 2222 
@@ -305,14 +363,19 @@ Hostname 172.16.0.10
 Port 2222 
 User admin
 IdentityFile ~/.ssh/id_ed25519
-
+```
+**Команды:**
+```bash
 apt-get install -y ansible
 mkdir -p /etc/ansible
 cd /etc/ansible
-
-В файле:
+```
+*В файле:*
+```bash
 nano inventory.ini
-Записать:
+```
+*Записать:*
+```bash
 [servers]
 isp ansible_host=172.16.0.1
 dc ansible_host=172.16.0.10
@@ -321,10 +384,13 @@ srv ansible_host=172.16.0.20
 ansible_user=admin
 ansible_password=P@ssw0rd
 ansible_port=2222
-
-В файле:
+```
+*В файле:*
+```bash
 nano install_htop.yml
-Записать:
+```
+*Записать:*
+```bash
 ---
 - name: установка htop на servers
   hosts: servers
@@ -334,6 +400,9 @@ nano install_htop.yml
       shell: apt-get update
     - name: установить htop
       shell: apt-get install -y htop
-
+```
+**Команды:**
+```bash
 ansible-playbook -i inventory.ini install_htop.yml
+```
 (перед проверкой можно удалить htop с машин, запустить ansible и проверить на машинах наличие htop)
