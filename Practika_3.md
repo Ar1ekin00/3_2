@@ -51,7 +51,7 @@ echo 172.16.0.1/24 > ipv4address
 echo BOOTPROTO=static > options
 echo TYPE=eth >> options
 apt-get update
-apt-get install -y iptables 
+apt-get install -y iptables nano
 
 В файле:
 nano /etc/net/sysctl.conf
@@ -106,7 +106,7 @@ echo TYPE=eth >> options
 
 Для isp:
 ```bash
-apt-get install -y dhcp-server
+apt-get install -y dhcp-server 
 cd /etc/dhcp/
 
 В файле:
@@ -178,7 +178,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get install –y sudo htop openssh
+apt-get install –y sudo htop openssh nano
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -213,7 +213,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get install –y sudo htop openssh
+apt-get install –y sudo htop openssh nano
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -248,7 +248,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get install –y sudo htop openssh
+apt-get install –y sudo htop openssh nano
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
