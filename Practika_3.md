@@ -164,6 +164,8 @@ Banner /etc/openssh/banner.txt
 MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
+PubkeyAuthentication yes
+PasswordAuthentication yes 
 
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
@@ -195,6 +197,8 @@ Banner /etc/openssh/banner.txt
 MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
+PubkeyAuthentication yes
+PasswordAuthentication yes 
 
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
@@ -226,6 +230,8 @@ Banner /etc/openssh/banner.txt
 MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
+PubkeyAuthentication yes
+PasswordAuthentication yes 
 
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
@@ -257,6 +263,8 @@ Banner /etc/openssh/banner.txt
 MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
+PubkeyAuthentication yes
+PasswordAuthentication yes 
 
 echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
