@@ -317,7 +317,6 @@ nano inventory.ini
 isp ansible_host=172.16.0.1
 dc ansible_host=172.16.0.10
 srv ansible_host=172.16.0.20
-
 [servers:vars]
 ansible_user=admin
 ansible_password=P@ssw0rd
