@@ -334,3 +334,6 @@ nano install_htop.yml
       shell: apt-get update
     - name: установить htop
       shell: apt-get install -y htop
+
+ansible-playbook -i inventory.ini install_htop.yml
+(перед проверкой можно удалить htop с машин, запустить ansible и проверить на машинах наличие htop)
