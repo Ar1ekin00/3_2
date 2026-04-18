@@ -165,11 +165,7 @@ MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
 
-В файле:
-nano /etc/openssh/banner.txt
-Записать:
-«Authorized access only»
-
+echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
 ```
@@ -200,11 +196,7 @@ MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
 
-В файле:
-nano /etc/openssh/banner.txt
-Записать:
-«Authorized access only»
-
+echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
 ```
@@ -235,11 +227,7 @@ MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
 
-В файле:
-nano /etc/openssh/banner.txt
-Записать:
-«Authorized access only»
-
+echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
 ```
@@ -270,11 +258,7 @@ MaxAuthTries 2
 PermitRootLogin no
 AllowUsers monitor admin
 
-В файле:
-nano /etc/openssh/banner.txt
-Записать:
-«Authorized access only»
-
+echo «Authorized access only» > /etc/openssh/banner.txt
 systemctl enable --now sshd
 systemctl restart sshd
 ```
