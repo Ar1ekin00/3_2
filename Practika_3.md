@@ -126,6 +126,7 @@ cd /etc/dhcp/
 ```bash
 nano /etc/sysconfig/dhcpd
 ```
+
 *Записать:*
 ```bash
 DHCPDARGS=enp0s8
@@ -184,6 +185,7 @@ monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr
 *В файле:*
 ```bash
 nano /etc/openssh/sshd_config
+```
 *Записать:*
 ```bash
 Port 2222
@@ -256,12 +258,16 @@ useradd -m -s /bin/bash monitor
 echo "monitor:P@ssw0rd" | chpasswd
 chmod 4755 /usr/bin/sudo
 ```
-В файле:
+
+*В файле:*
+```bash
 EDITOR=nano visudo
-Записать:
+```
+*Записать:*
+```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
 monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
-
+```
 *В файле:*
 ```bash
 nano /etc/openssh/sshd_config
