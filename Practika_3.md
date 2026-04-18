@@ -51,7 +51,7 @@ echo 172.16.0.1/24 > ipv4address
 echo BOOTPROTO=static > options
 echo TYPE=eth >> options
 apt-get update
-apt-get install iptables 
+apt-get install -y iptables 
 
 В файле:
 nano /etc/net/sysctl.conf
@@ -89,8 +89,82 @@ echo TYPE=eth >> options
 hostnamectl set-hostname cli.lab.local
 exec bash
 cd /etc/net/ifaces/
-mkdir -p enp0s3
+mkdir -p enp0s3 
 cd enp0s3
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
+```
+
+---
+
+### 2: Настройка DHCP, SSH, Sudo и локальных учётных записей
+- На `isp` разверните и настройте службу DHCP. Реализуйте выдачу IP-адресов для `dc` и `srv` посредством статических привязок по MAC-адресам. Проверьте получение адресов после перезагрузки сетевых служб или ВМ.
+- На всех четырёх узлах создайте двух локальных пользователей: `admin` и `monitor`.
+- Настройте политику `sudo`: `admin` должен иметь право выполнять любые команды от имени суперпользователя без запроса пароля. `monitor` должен иметь право выполнять без пароля только команды мониторинга состояния системы (`htop`, `df`, `free`, `journalctl`, `systemctl status *`). Использование `sudo` для любых других команд должно быть запрещено.
+- Захарденьте конфигурацию SSH-сервера на всех узлах: измените порт прослушивания на `2222`, установите текстовый баннер «Authorized access only», ограничьте количество попыток аутентификации до двух за сессию, запретите прямой вход под учётной записью `root`, разрешите подключение по SSH исключительно для пользователей `admin` и `monitor`.
+- Проверьте удалённое подключение с `cli` ко всем серверам по новому порту с использованием созданных учётных записей.
+
+Для isp:
+```bash
+apt-get install -y dhcp-server
+cd /etc/dhcp/
+
+В файле:
+/etc/sysconfig/dhcpd
+Записать:
+DHCPDARGS=enp0s8
+
+
+В файле:
+nano dhcpd.conf
+Записать:
+ddns-update-style none;
+subnet 172.16.0.0 netmask 255.255.255.0 {
+  option routers 172.16.0.1;
+  option subnet-mask 255.255.255.0;
+  option domain-name “lab.local”;
+  option domain-search “lab.local”;
+  option domain-name-servers 172.16.0.10, 8.8.8.8, 8.8.4.4;
+  range 172.16.0.200 172.16.0.250;
+  max-lease-time 43200;
+  default-lease-time 21600;
+  option ntp-servers 172.16.0.1;
+}
+host srv {
+hardware ethernet 08:00:27:2b:2a:a6;
+fixed-address 172.16.0.20;
+}
+host dc {
+hardware ethernet 08:00:27:2b:2a:a6;
+fixed-address 172.16.0.10;
+}
+
+dhcpd -t
+systemctl restart dhcpd
+Systemctl enable --now dhcpd
+Systemctl restart network
+apt-get install –y sudo htop openssh
+useradd -m -s /bin/bash admin
+echo "admin:P@ssw0rd" | chpasswd
+useradd -m -s /bin/bash monitor
+echo "monitor:P@ssw0rd" | chpasswd
+chmod 4755 /usr/bin/sudo
+
+В файле:
+EDITOR=nano visudo
+Записать:
+admin ALL=(root:ALL) NOPASSWD: ALL
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+
+В файле:
+nano /etc/openssh/sshd_config
+Записать:
+Port 2222
+Banner /etc/openssh/banner.txt
+MaxAuthTries 2
+PermitRootLogin no
+AllowUsers monitor admin
+
+systemctl enable --now sshd
+systemctl restart sshd
 ```
