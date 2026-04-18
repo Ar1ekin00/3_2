@@ -279,3 +279,29 @@ systemctl restart sshd
 - Настройте аутентификацию по SSH-ключам для пользователя `admin` с `cli` на все хосты группы `servers` для обеспечения беспарольного взаимодействия.
 - Напишите плейбук `install_htop.yml`, целью которого является установка пакета `htop` на все узлы группы `servers`.
 - Запустите плейбук и зафиксируйте успешное выполнение задачи на всех целевых серверах. Проверьте связность командой `ansible all -m ping`.
+
+Для cli:
+```bash
+ssh-keygen
+ssh-copy-id -p 2222 admin@172.16.0.1
+ssh-copy-id -p 2222 admin@172.16.0.10
+ssh-copy-id -p 2222 admin@172.16.0.20
+
+В файле:
+nano ~/.ssh/config
+Записать:
+Host isp
+Hostname 172.16.0.1
+Port 2222 
+User admin
+IdentityFile ~/.ssh/id_ed25519
+Host srv
+Hostname 172.16.0.20
+Port 2222 
+User admin
+IdentityFile ~/.ssh/id_ed25519
+Host dc
+Hostname 172.16.0.10
+Port 2222 
+User admin
+IdentityFile ~/.ssh/id_ed25519
