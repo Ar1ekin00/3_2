@@ -141,8 +141,98 @@ fixed-address 172.16.0.10;
 
 dhcpd -t
 systemctl restart dhcpd
-Systemctl enable --now dhcpd
-Systemctl restart network
+systemctl enable --now dhcpd
+systemctl restart network
+apt-get install –y sudo htop openssh
+useradd -m -s /bin/bash admin
+echo "admin:P@ssw0rd" | chpasswd
+useradd -m -s /bin/bash monitor
+echo "monitor:P@ssw0rd" | chpasswd
+chmod 4755 /usr/bin/sudo
+
+В файле:
+EDITOR=nano visudo
+Записать:
+admin ALL=(root:ALL) NOPASSWD: ALL
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+
+В файле:
+nano /etc/openssh/sshd_config
+Записать:
+Port 2222
+Banner /etc/openssh/banner.txt
+MaxAuthTries 2
+PermitRootLogin no
+AllowUsers monitor admin
+
+systemctl enable --now sshd
+systemctl restart sshd
+```
+
+Для dc:
+```bash
+systemctl restart network
+apt-get update
+apt-get install –y sudo htop openssh
+useradd -m -s /bin/bash admin
+echo "admin:P@ssw0rd" | chpasswd
+useradd -m -s /bin/bash monitor
+echo "monitor:P@ssw0rd" | chpasswd
+chmod 4755 /usr/bin/sudo
+
+В файле:
+EDITOR=nano visudo
+Записать:
+admin ALL=(root:ALL) NOPASSWD: ALL
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+
+В файле:
+nano /etc/openssh/sshd_config
+Записать:
+Port 2222
+Banner /etc/openssh/banner.txt
+MaxAuthTries 2
+PermitRootLogin no
+AllowUsers monitor admin
+
+systemctl enable --now sshd
+systemctl restart sshd
+```
+
+Для srv:
+```bash
+systemctl restart network
+apt-get update
+apt-get install –y sudo htop openssh
+useradd -m -s /bin/bash admin
+echo "admin:P@ssw0rd" | chpasswd
+useradd -m -s /bin/bash monitor
+echo "monitor:P@ssw0rd" | chpasswd
+chmod 4755 /usr/bin/sudo
+
+В файле:
+EDITOR=nano visudo
+Записать:
+admin ALL=(root:ALL) NOPASSWD: ALL
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+
+В файле:
+nano /etc/openssh/sshd_config
+Записать:
+Port 2222
+Banner /etc/openssh/banner.txt
+MaxAuthTries 2
+PermitRootLogin no
+AllowUsers monitor admin
+
+systemctl enable --now sshd
+systemctl restart sshd
+```
+
+Для cli:
+```bash
+systemctl restart network
+apt-get update
 apt-get install –y sudo htop openssh
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
