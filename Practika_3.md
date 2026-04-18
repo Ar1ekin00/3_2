@@ -40,7 +40,7 @@
 - Включите IP-форвардинг на `isp` и настройте базовую трансляцию сетевых адресов (NAT/Masquerade), обеспечив доступ внутренних узлов к сети Интернет.
 - Убедитесь в физической и логической связности узлов на уровне L3. Проверьте базовую маршрутизацию и доступность внешних ресурсов.
 
-Для isp:
+**Для isp:**
 ```bash
 hostnamectl set-hostname isp.lab.local
 exec bash
@@ -52,19 +52,19 @@ echo BOOTPROTO=static > options
 echo TYPE=eth >> options
 apt-get update
 apt-get install -y iptables nano
-
+```
 В файле:
 nano /etc/net/sysctl.conf
 отредачить:
 net.ipv4.ip_forward = 1
-
+```bash
 sysctl -p
 iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
 iptables-save -f /etc/sysconfig/iptables 
 systemctl enable --now iptables
 systemctl restart network
 ```
-Для dc:
+**Для dc:**
 ```bash
 hostnamectl set-hostname dc.lab.local
 exec bash
@@ -74,7 +74,7 @@ cd enp0s3
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
 ```
-Для srv:
+**Для srv:**
 ```bash
 hostnamectl set-hostname srv.lab.local
 exec bash
@@ -84,7 +84,7 @@ cd enp0s3
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
 ```
-Для cli:
+**Для cli:**
 ```bash
 hostnamectl set-hostname cli.lab.local
 exec bash
@@ -104,7 +104,7 @@ echo TYPE=eth >> options
 - Захарденьте конфигурацию SSH-сервера на всех узлах: измените порт прослушивания на `2222`, установите текстовый баннер «Authorized access only», ограничьте количество попыток аутентификации до двух за сессию, запретите прямой вход под учётной записью `root`, разрешите подключение по SSH исключительно для пользователей `admin` и `monitor`.
 - Проверьте удалённое подключение с `cli` ко всем серверам по новому порту с использованием созданных учётных записей.
 
-Для isp:
+**Для isp:**
 ```bash
 apt-get install -y dhcp-server 
 cd /etc/dhcp/
@@ -172,7 +172,7 @@ systemctl enable --now sshd
 systemctl restart sshd
 ```
 
-Для dc:
+**Для dc:**
 ```bash
 systemctl restart network
 apt-get update
@@ -205,7 +205,7 @@ systemctl enable --now sshd
 systemctl restart sshd
 ```
 
-Для srv:
+**Для srv:**
 ```bash
 systemctl restart network
 apt-get update
@@ -238,7 +238,7 @@ systemctl enable --now sshd
 systemctl restart sshd
 ```
 
-Для cli:
+**Для cli:**
 ```bash
 systemctl restart network
 apt-get update
@@ -280,7 +280,7 @@ systemctl restart sshd
 - Напишите плейбук `install_htop.yml`, целью которого является установка пакета `htop` на все узлы группы `servers`.
 - Запустите плейбук и зафиксируйте успешное выполнение задачи на всех целевых серверах. Проверьте связность командой `ansible all -m ping`.
 
-Для cli:
+**Для cli:**
 ```bash
 ssh-keygen
 ssh-copy-id -p 2222 admin@172.16.0.1
