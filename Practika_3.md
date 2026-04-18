@@ -305,3 +305,33 @@ Hostname 172.16.0.10
 Port 2222 
 User admin
 IdentityFile ~/.ssh/id_ed25519
+
+apt-get install -y ansible
+mkdir -p /etc/ansible
+cd /etc/ansible
+
+В файле:
+nano inventory.ini
+Записать:
+[servers]
+isp ansible_host=172.16.0.1
+dc ansible_host=172.16.0.10
+srv ansible_host=172.16.0.20
+
+[servers:vars]
+ansible_user=admin
+ansible_password=P@ssw0rd
+ansible_port=2222
+
+В файле:
+nano install_htop.yml
+Записать:
+---
+- name: установка htop на servers
+  hosts: servers
+  become: yes
+  tasks:
+    - name: обновить пакеты
+      shell: apt-get update
+    - name: установить htop
+      shell: apt-get install -y htop
