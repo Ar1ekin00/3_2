@@ -422,6 +422,53 @@ ansible-playbook -i inventory.ini install_htop.yml
 - (*) Настройте обратную зону для подсети `172.16.0.0/24` и добавьте корректные PTR-записи.
 - Проверьте корректность прямого и обратного разрешения имён с узла `cli` с использованием `nslookup` или `dig`.
 
+### Для isp (NTP - синхронизация времени):
+**Команды:**
+```bash
+apt-get install -y chrony ntpdate
+```
+*В файле:*
+```bash
+nano /etc/chrony.conf 
+```
+*Записать:*
+```bash
+pool pool.ntp.org iburst
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+hwtimestamp *
+allow 172.16.0.0/24
+local stratum 5
+ntsdumpdir /var/lib/chrony
+logdir /var/log/chrony
+log measurements statistics tracking
+```
+**Команды:**
+```bash
+systemctl enable --now chronyd
+systemctl restart network
+systemctl restart chronyd
+```
+### Для dc, srv, cli:
+**Команды:**
+```bash
+apt-get install -y chrony ntpdate
+```
+*В файле:*
+```bash
+nano /etc/chrony.conf 
+```
+*Записать:*
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+hwtimestamp *
+ntsdumpdir /var/lib/chrony
+logdir /var/log/chrony
+log measurements statistics tracking
+server 172.16.0.1
+```
 ---
 
 ### 5: Контроллер домена Samba DC и групповые политики
