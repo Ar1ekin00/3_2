@@ -46,13 +46,12 @@
 hostnamectl set-hostname isp.lab.local
 exec bash
 cd /etc/net/ifaces/
-mkdir -p enp0s8
-cd enp0s8
+mkdir -p ens19
+cd ens19
 echo 172.16.0.1/24 > ipv4address
 echo BOOTPROTO=static > options
 echo TYPE=eth >> options
-apt-get update
-apt-get install -y iptables nano
+apt-get update && apt-get install -y iptables nano
 ```
 *В файле:*
 ```bash
@@ -66,7 +65,7 @@ net.ipv4.ip_forward = 1
 **Команды:**
 ```bash
 sysctl -p
-iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o ens18 -j MASQUERADE
 iptables-save -f /etc/sysconfig/iptables 
 systemctl enable --now iptables
 systemctl restart network
