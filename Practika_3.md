@@ -352,8 +352,14 @@ systemctl restart sshd
 **Команды:**
 ```bash
 ssh-keygen
+```
+```bash
 ssh-copy-id -p 2222 admin@172.16.0.1
+```
+```bash
 ssh-copy-id -p 2222 admin@172.16.0.10
+```
+```bash
 ssh-copy-id -p 2222 admin@172.16.0.20
 ```
 *В файле:*
