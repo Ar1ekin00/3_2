@@ -173,7 +173,7 @@ dhcpd -t
 systemctl restart dhcpd
 systemctl enable --now dhcpd
 systemctl restart network
-apt-get –y install sudo htop openssh
+apt-get -y install sudo htop openssh
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
