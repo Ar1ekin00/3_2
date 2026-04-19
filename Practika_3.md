@@ -45,6 +45,8 @@
 ```bash
 hostnamectl set-hostname isp.lab.local
 exec bash
+```
+```bash
 cd /etc/net/ifaces/
 mkdir -p ens19
 cd ens19
