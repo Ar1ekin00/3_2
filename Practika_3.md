@@ -216,7 +216,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get install –y sudo htop openssh nano
+apt-get -y install sudo htop openssh nano
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -259,7 +259,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get install –y sudo htop openssh nano
+apt-get -y install sudo htop openssh nano
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -302,7 +302,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get install –y sudo htop openssh nano
+apt-get -y install sudo htop openssh nano
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -380,7 +380,7 @@ IdentityFile ~/.ssh/id_ed25519
 ```
 **Команды:**
 ```bash
-apt-get install -y ansible
+apt-get -y install ansible
 mkdir -p /etc/ansible
 cd /etc/ansible
 ```
@@ -433,7 +433,7 @@ ansible-playbook -i inventory.ini install_htop.yml
 ### Для isp (NTP - синхронизация времени):
 **Команды:**
 ```bash
-apt-get install -y chrony ntpdate
+apt-get -y install chrony ntpdate
 ```
 *В файле:*
 ```bash
@@ -464,7 +464,7 @@ chronyc sources -v
 ### Для dc, srv, cli (NTP - синхронизация времени):
 **Команды:**
 ```bash
-apt-get install -y chrony ntpdate
+apt-get -y install chrony ntpdate
 ```
 *В файле:*
 ```bash
