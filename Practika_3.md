@@ -486,6 +486,10 @@ ntsdumpdir /var/lib/chrony
 logdir /var/log/chrony
 server 172.16.0.1
 ```
+Закомментировать строку ->
+```bash
+#pool pool.ntp.org iburst
+```
 **Команды:**
 ```bash
 systemctl enable --now chronyd
