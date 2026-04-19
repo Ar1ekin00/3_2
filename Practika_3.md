@@ -459,6 +459,7 @@ apt-get install -y chrony ntpdate
 ```bash
 nano /etc/chrony.conf 
 ```
+```bash
 *Записать:*
 driftfile /var/lib/chrony/drift
 makestep 1.0 3
