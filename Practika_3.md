@@ -491,6 +491,9 @@ server 172.16.0.1
 systemctl enable --now chronyd
 systemctl restart network
 systemctl restart chronyd
+```
+(Команды для проверки, для отчёта) ->
+```bash
 ntpdate -q 172.16.0.1
 chronyc tracking
 chronyc sources -v
