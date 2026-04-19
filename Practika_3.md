@@ -81,8 +81,8 @@ exec bash
 ```
 ```bash
 cd /etc/net/ifaces/
-mkdir -p enp0s3
-cd enp0s3
+mkdir -p ens18
+cd ens18
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
 ```
@@ -94,8 +94,8 @@ exec bash
 ```
 ```bash
 cd /etc/net/ifaces/
-mkdir -p enp0s3
-cd enp0s3
+mkdir -p ens18
+cd ens18
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
 ```
@@ -107,8 +107,8 @@ exec bash
 ```
 ```bash
 cd /etc/net/ifaces/
-mkdir -p enp0s3 
-cd enp0s3
+mkdir -p ens18
+cd ens18
 echo BOOTPROTO=dhcp > options
 echo TYPE=eth >> options
 ```
