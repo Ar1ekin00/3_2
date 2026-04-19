@@ -136,7 +136,7 @@ nano /etc/sysconfig/dhcpd
 
 *Записать:*
 ```bash
-DHCPDARGS=enp0s8
+DHCPDARGS=ens19
 ```
 
 *В файле:*
