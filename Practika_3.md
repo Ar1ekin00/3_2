@@ -125,7 +125,7 @@ echo TYPE=eth >> options
 ### Для isp:
 **Команды:**
 ```bash
-apt-get install -y dhcp-server 
+apt-get install -y dhcp-server python3-module-setuptools python3-dev
 cd /etc/dhcp/
 ```
 
@@ -216,7 +216,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get -y install sudo htop openssh nano
+apt-get -y install sudo htop openssh nano python3-module-setuptools python3-dev
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -259,7 +259,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get -y install sudo htop openssh nano
+apt-get -y install sudo htop openssh nano python3-module-setuptools python3-dev
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -302,7 +302,7 @@ systemctl restart sshd
 ```bash
 systemctl restart network
 apt-get update
-apt-get -y install sudo htop openssh nano
+apt-get -y install sudo htop openssh nano python3-module-setuptools python3-dev
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
@@ -380,7 +380,7 @@ IdentityFile ~/.ssh/id_rsa
 ```
 **Команды:**
 ```bash
-apt-get -y install ansible sshpass
+apt-get -y install ansible sshpass 
 mkdir -p /etc/ansible
 cd /etc/ansible
 ```
