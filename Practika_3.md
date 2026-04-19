@@ -467,7 +467,6 @@ rtcsync
 hwtimestamp *
 ntsdumpdir /var/lib/chrony
 logdir /var/log/chrony
-log measurements statistics tracking
 server 172.16.0.1
 ```
 **Команды:**
