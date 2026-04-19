@@ -364,19 +364,19 @@ nano ~/.ssh/config
 ```bash
 Host isp
 Hostname 172.16.0.1
-Port 2222 
+Port 2222
 User admin
-IdentityFile ~/.ssh/id_ed25519
+IdentityFile ~/.ssh/id_rsa    
 Host srv
 Hostname 172.16.0.20
-Port 2222 
+Port 2222
 User admin
-IdentityFile ~/.ssh/id_ed25519
+IdentityFile ~/.ssh/id_rsa    
 Host dc
 Hostname 172.16.0.10
-Port 2222 
+Port 2222
 User admin
-IdentityFile ~/.ssh/id_ed25519
+IdentityFile ~/.ssh/id_rsa
 ```
 **Команды:**
 ```bash
