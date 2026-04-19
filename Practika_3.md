@@ -450,7 +450,7 @@ systemctl enable --now chronyd
 systemctl restart network
 systemctl restart chronyd
 ```
-### Для dc, srv, cli:
+### Для dc, srv, cli (NTP - синхронизация времени):
 **Команды:**
 ```bash
 apt-get install -y chrony ntpdate
