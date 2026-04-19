@@ -78,6 +78,8 @@ systemctl restart network
 ```bash
 hostnamectl set-hostname dc.lab.local
 exec bash
+```
+```bash
 cd /etc/net/ifaces/
 mkdir -p enp0s3
 cd enp0s3
@@ -89,6 +91,8 @@ echo TYPE=eth >> options
 ```bash
 hostnamectl set-hostname srv.lab.local
 exec bash
+```
+```bash
 cd /etc/net/ifaces/
 mkdir -p enp0s3
 cd enp0s3
@@ -100,6 +104,8 @@ echo TYPE=eth >> options
 ```bash
 hostnamectl set-hostname cli.lab.local
 exec bash
+```
+```bash
 cd /etc/net/ifaces/
 mkdir -p enp0s3 
 cd enp0s3
