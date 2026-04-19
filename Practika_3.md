@@ -158,11 +158,11 @@ subnet 172.16.0.0 netmask 255.255.255.0 {
   option ntp-servers 172.16.0.1;
 }
 host srv {
-hardware ethernet 08:00:27:2b:2a:a6;
+hardware ethernet <свой mac-адрес>;
 fixed-address 172.16.0.20;
 }
 host dc {
-hardware ethernet 08:00:27:2b:2a:a6;
+hardware ethernet <свой mac-адрес>;
 fixed-address 172.16.0.10;
 }
 ```
