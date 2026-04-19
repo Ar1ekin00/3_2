@@ -563,6 +563,7 @@ samba-tool user show sidorov --attributes=distinguishedName
 ### Для cli (настройка samba):
 **Команды:**
 ```bash
+apt-get -y remove alterator-datetime
 apt-get -y install task-auth-ad-sssd bind-utils alterator-auth alterator-gpupdate admc gpui gpupdate
 ```
 Далее заходишь в cli с графической оболочкой, открываешь центр управления системой -> аутентификация -> выбираешь Active Directory or ALT Domain, домен уже будет указан верный -> Применить
