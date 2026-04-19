@@ -513,7 +513,65 @@ chronyc sources -v
   - Введите пользователя `ivanov` в группу `admins`, пользователей `petrov` и `sidorov` в группу `managers`
 - Настройте и примените хотя бы одну групповую политику (GPO) для управления параметрами безопасности и рабочим столом доменных узлов.
 - Проверьте разрешение имён и доменную аутентификацию с рабочей станции `cli`. Убедитесь, что клиент успешно введён в домен.
+### Для dc (настройка samba):
+**Команды:**
+```bash
+apt-get install -y samba krb5-workstation task-samba-dc bind-utils
+systemctl disable --now smb nmb winbind
+rm -f /etc/samba/smb.conf
+rm -rf /var/lib/samba/*
+rm -rf /var/cache/samba/*
+samba-tool domain provision
+```
+(Везде жмёшь enter, кроме пункта DNS forwarder IP address - здесь пиши "8.8.8.8", а далее вводишь пароль "P@ssw0rd")
+```bash
+cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
+systemctl enable --now samba
+```
+(Команды для проверки зон, для отчёта) ->
+```bash
+samba-tool domain info 172.16.0.10
+samba-tool dns zonelist 172.16.0.10 -U Administrator
+```
+```bash
+samba-tool ou create "OU=admins,DC=lab,DC=local"
+samba-tool ou create "OU=others,DC=lab,DC=local"
+samba-tool ou create "OU=managers,DC=lab,DC=local"
+samba-tool group add admins --group-type=Security
+samba-tool group add managers --group-type=Security
+samba-tool user create ivanov 'P@ssw0rd'
+samba-tool user create petrov 'P@ssw0rd'
+samba-tool user create sidorov 'P@ssw0rd'
+samba-tool user move ivanov "OU=admins,DC=lab,DC=local"
+samba-tool user move petrov "OU=managers,DC=lab,DC=local"
+samba-tool user move sidorov "OU=managers,DC=lab,DC=local"
+samba-tool group addmembers admins ivanov
+samba-tool group addmembers managers petrov,sidorov
+samba-tool user enable ivanov
+samba-tool user enable petrov
+samba-tool user enable sidorov
+```
 
+(Команды для проверки групп, пользователей, для отчёта) ->
+```bash
+samba-tool group listmembers admins
+samba-tool group listmembers managers
+samba-tool user show ivanov --attributes=distinguishedName
+samba-tool user show petrov --attributes=distinguishedName
+samba-tool user show sidorov --attributes=distinguishedName
+```
+### Для cli (настройка samba):
+**Команды:**
+```bash
+apt-get -y install task-auth-ad-sssd bind-utils alterator-auth alterator-gpupdate admc gpui gpupdate
+```
+Далее заходишь в cli с графической оболочкой, открываешь центр управления системой -> аутентификация -> выбираешь Active Directory or ALT Domain, домен уже будет указан верный -> Применить
+```bash
+kinit Administrator@LAB.LOCAL
+kinit ivanov@LAB.LOCAL
+kinit petrov@LAB.LOCAL
+kinit sidorov@LAB.LOCAL
+```
 ---
 
 ### 6: Политика межсетевого экрана на шлюзе
