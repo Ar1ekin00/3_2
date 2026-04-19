@@ -166,6 +166,8 @@ hardware ethernet <свой mac-адрес>;
 fixed-address 172.16.0.10;
 }
 ```
+MAC-адрес отображается жёлтым, команда ip -c a
+
 **Команды:**
 ```bash
 dhcpd -t
