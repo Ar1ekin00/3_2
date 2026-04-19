@@ -147,11 +147,11 @@ nano dhcpd.conf
 ```bash
 ddns-update-style none;
 subnet 172.16.0.0 netmask 255.255.255.0 {
-  option routers 172.16.0.1;
-  option subnet-mask 255.255.255.0;
-  option domain-name “lab.local”;
-  option domain-search “lab.local”;
-  option domain-name-servers 172.16.0.10, 8.8.8.8, 8.8.4.4;
+  option routers         172.16.0.1;
+  option subnet-mask     255.255.255.0;
+  option domain-name "lab.local";
+  option domain-search "lab.local";
+  option domain-name-servers     172.16.0.10, 8.8.8.8, 8.8.4.4;
   range 172.16.0.200 172.16.0.250;
   max-lease-time 43200;
   default-lease-time 21600;
@@ -164,9 +164,8 @@ fixed-address 172.16.0.20;
 host dc {
 hardware ethernet <свой mac-адрес>;
 fixed-address 172.16.0.10;
-}
 ```
-MAC-адрес отображается жёлтым, команда ip -c a
+MAC-адрес отображается жёлтым, команда ip -c a 
 
 **Команды:**
 ```bash
@@ -174,7 +173,7 @@ dhcpd -t
 systemctl restart dhcpd
 systemctl enable --now dhcpd
 systemctl restart network
-apt-get install –y sudo htop openssh
+apt-get –y install sudo htop openssh
 useradd -m -s /bin/bash admin
 echo "admin:P@ssw0rd" | chpasswd
 useradd -m -s /bin/bash monitor
