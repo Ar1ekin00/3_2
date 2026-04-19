@@ -449,6 +449,9 @@ log measurements statistics tracking
 systemctl enable --now chronyd
 systemctl restart network
 systemctl restart chronyd
+ntpdate -q 172.16.0.1
+chronyc tracking
+chronyc sources -v
 ```
 ### Для dc, srv, cli (NTP - синхронизация времени):
 **Команды:**
@@ -474,6 +477,9 @@ server 172.16.0.1
 systemctl enable --now chronyd
 systemctl restart network
 systemctl restart chronyd
+ntpdate -q 172.16.0.1
+chronyc tracking
+chronyc sources -v
 ```
 ---
 
