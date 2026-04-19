@@ -188,7 +188,7 @@ EDITOR=nano visudo
 *Записать:*
 ```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
-monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
 ```
 *В файле:*
 ```bash
@@ -230,7 +230,7 @@ EDITOR=nano visudo
 *Записать:*
 ```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
-monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
 ```
 
 *В файле:*
@@ -274,7 +274,7 @@ EDITOR=nano visudo
 *Записать:*
 ```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
-monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
 ```
 *В файле:*
 ```bash
@@ -316,7 +316,7 @@ EDITOR=nano visudo
 *Записать:*
 ```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
-monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/fd, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
 ```
 *В файле:*
 ```bash
