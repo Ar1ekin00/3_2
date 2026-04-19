@@ -380,7 +380,7 @@ IdentityFile ~/.ssh/id_rsa
 ```
 **Команды:**
 ```bash
-apt-get -y install ansible
+apt-get -y install ansible sshpass
 mkdir -p /etc/ansible
 cd /etc/ansible
 ```
