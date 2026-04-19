@@ -469,6 +469,12 @@ logdir /var/log/chrony
 log measurements statistics tracking
 server 172.16.0.1
 ```
+**Команды:**
+```bash
+systemctl enable --now chronyd
+systemctl restart network
+systemctl restart chronyd
+```
 ---
 
 ### 5: Контроллер домена Samba DC и групповые политики
