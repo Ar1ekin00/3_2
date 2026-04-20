@@ -572,8 +572,14 @@ apt-get -y install task-auth-ad-sssd bind-utils alterator-auth alterator-gpupdat
 
 ```bash
 kinit Administrator@LAB.LOCAL
+```
+```bash
 kinit ivanov@LAB.LOCAL
+```
+```bash
 kinit petrov@LAB.LOCAL
+```
+```bash
 kinit sidorov@LAB.LOCAL
 ```
 Для установки групповой политики: Пуск -> в поиске "ADMC" -> заходишь за пользователя administrator -> В левом окне "Group policy Objects" -> lab.local -> в правом окне есть "Default Domain Policy" - галочку под Enforced. Далее нажимаешь ПКМ по "Default Domain Policy" -> edit (чтобы изменить групповую политику) -> Machine -> Administrative Templates -> ALT System -> Network Applications -> Permission to use /usr/bin/ping -> галочку под Enabled в options: поставить "Only root", а в самом низу OK.
