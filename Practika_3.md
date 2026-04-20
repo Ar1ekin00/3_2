@@ -605,21 +605,33 @@ samba-tool dns zonecreate dc.lab.local 0.16.172.in-addr.arpa
 samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 10 PTR dc.lab.local
 samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 20 PTR srv.lab.local
 ```
+*В файле:*
+```bash
+nano /etc/samba/smb.conf
+```
+*Записать:*
+```bash
+[globals]
+   dns forwarder = 8.8.8.8
+   allow dns updates = secure only
+```
+
+
 (Команды для проверки DNS) ->
 ### Для cli:
+Прямое разрешение CNAME:
 ```bash
-# Прямое разрешение CNAME
 nslookup moodle.lab.local
 nslookup web.lab.local
 nslookup docker.lab.local
 ```
 
-# Обратное (PTR)
+Обратное (PTR):
 ```bash
 nslookup 172.16.0.10
 nslookup 172.16.0.20
 ```
-# dig
+dig:
 ```bash
 dig moodle.lab.local CNAME +short
 dig web.lab.local CNAME +short
