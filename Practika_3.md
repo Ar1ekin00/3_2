@@ -432,9 +432,6 @@ ansible-playbook -i inventory.ini install_htop.yml
 ### 4: Настройка синхронизации времени
 - Настройте службу синхронизации сетевого времени на базе сервиса `chrony` на шлюзе `isp`. В качестве вышестоящего сервера NTP укажите общедоступный пул времени. Установите стратум сервера равным 5.
 - В качестве клиентов NTP настройте серверы `dc` и `srv`, а также рабочую станцию `cli`. Убедитесь в успешной синхронизации времени на всех узлах инфраструктуры.
-- На сервере `dc` настройте встроенный DNS-сервер Samba: убедитесь в корректности прямой и обратной зон для `lab.local`. Создайте псевдонимы (CNAME-записи) `moodle.lab.local`, `web.lab.local` и `docker.lab.local`, указывающие на соответствующие базовые A-записи серверов `dc` и `srv`. 
-- (*) Настройте обратную зону для подсети `172.16.0.0/24` и добавьте корректные PTR-записи.
-- Проверьте корректность прямого и обратного разрешения имён с узла `cli` с использованием `nslookup` или `dig`.
 
 ### Для isp (NTP - синхронизация времени):
 **Команды:**
@@ -590,9 +587,44 @@ reboot
 ```
 ---
 
-### 4: DNS-инфраструктура (продолжение 4 шага):
+### 4: DNS-инфраструктура (продолжение 4 шага)
+- На сервере `dc` настройте встроенный DNS-сервер Samba: убедитесь в корректности прямой и обратной зон для `lab.local`. Создайте псевдонимы (CNAME-записи) `moodle.lab.local`, `web.lab.local` и `docker.lab.local`, указывающие на соответствующие базовые A-записи серверов `dc` и `srv`. 
+- (*) Настройте обратную зону для подсети `172.16.0.0/24` и добавьте корректные PTR-записи.
+- Проверьте корректность прямого и обратного разрешения имён с узла `cli` с использованием `nslookup` или `dig`.
 ### Для dc:
 **Команды:**
+```bash
+kinit Administrator@LAB.LOCAL
+```
+```bash
+samba-tool dns add dc.lab.local lab.local srv A 172.16.0.20
+samba-tool dns add dc.lab.local lab.local moodle CNAME dc.lab.local 
+samba-tool dns add dc.lab.local lab.local web CNAME srv.lab.local
+samba-tool dns add dc.lab.local lab.local docker CNAME srv.lab.local
+samba-tool dns zonecreate dc.lab.local 0.16.172.in-addr.arpa
+samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 10 PTR dc.lab.local
+samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 20 PTR srv.lab.local
+```
+(Команды для проверки DNS) ->
+### Для cli:
+```bash
+# Прямое разрешение CNAME
+nslookup moodle.lab.local
+nslookup web.lab.local
+nslookup docker.lab.local
+```
+
+# Обратное (PTR)
+```bash
+nslookup 172.16.0.10
+nslookup 172.16.0.20
+```
+# dig
+```bash
+dig moodle.lab.local CNAME +short
+dig web.lab.local CNAME +short
+dig -x 172.16.0.10 PTR +short
+```
 
 ---
 ### 6: Политика межсетевого экрана на шлюзе
