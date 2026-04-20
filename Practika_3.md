@@ -566,12 +566,21 @@ samba-tool user show sidorov --attributes=distinguishedName
 apt-get -y remove alterator-datetime
 apt-get -y install task-auth-ad-sssd bind-utils alterator-auth alterator-gpupdate admc gpui gpupdate
 ```
-Далее заходишь в cli с графической оболочкой, открываешь центр управления системой -> аутентификация -> выбираешь Active Directory or ALT Domain, домен уже будет указан верный -> Применить
+Далее заходишь в cli с графической оболочкой, открываешь system management center -> authentication -> выбираешь Active Directory or ALT Domain, домен уже будет указан верный -> Apply
+
+Для групповых политик открываешь system management center -> Group policy -> поставить галочку под пунктом "Group policy Management", ниже Current group policy profile: галочку под Active Directory Domain Controller -> Apply
+
 ```bash
 kinit Administrator@LAB.LOCAL
 kinit ivanov@LAB.LOCAL
 kinit petrov@LAB.LOCAL
 kinit sidorov@LAB.LOCAL
+```
+Для установки групповой политики: Пуск -> в поиске "ADMC" -> заходишь за пользователя administrator -> В левом окне "Group policy Objects" -> lab.local -> в правом окне есть "Default Domain Policy" - галочку под Enforced. Далее нажимаешь ПКМ по "Default Domain Policy" -> edit (чтобы изменить групповую политику) -> Machine -> Administrative Templates -> ALT System -> Network Applications -> Permission to use /usr/bin/ping -> галочку под Enabled в options: поставить "Only root", а в самом низу OK.
+Под root:
+```bash
+gpupdate
+reboot
 ```
 ---
 
