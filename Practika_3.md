@@ -665,7 +665,32 @@ dig -x 172.16.0.10 PTR +short
 - Активируйте и сохраните правила брандмауэра. Проверьте работоспособность фильтрации трафика и внесите основные параметры настройки в отчёт.
 ### Для isp:
 ```bash
-
+iptables -F
+iptables -t nat -A POSTROUTING -o ens18 -j MASQUERADE
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p icmp -j ACCEPT
+iptables -A FORWARD -p tcp --dport 80 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 443 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 53 -j ACCEPT
+iptables -A FORWARD -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -p udp --dport 123 -j ACCEPT
+iptables -A FORWARD -p icmp -j ACCEPT
+iptables -A FORWARD -s 172.16.0.0/24 -j ACCEPT
+iptables -A FORWARD -d 172.16.0.0/24 ! -s 172.16.0.0/24 -j DROP
+iptables -P FORWARD DROP
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables-save -f /etc/sysconfig/iptables
+systemctl restart network && systemctl restart iptables
 ```
-
-
+(Команды для проверки правил, для отчёта) ->
+```bash
+iptables -n -L
+```
