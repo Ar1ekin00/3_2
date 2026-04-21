@@ -579,7 +579,20 @@ kinit petrov@LAB.LOCAL
 ```bash
 kinit sidorov@LAB.LOCAL
 ```
-Для установки групповой политики: Пуск -> в поиске "ADMC" -> заходишь за пользователя administrator -> В левом окне "Group policy Objects" -> lab.local -> в правом окне есть "Default Domain Policy" - галочку под Enforced. Далее нажимаешь ПКМ по "Default Domain Policy" -> edit (чтобы изменить групповую политику) -> Machine -> Administrative Templates -> ALT System -> Network Applications -> Permission to use /usr/bin/ping -> галочку под Enabled в options: поставить "Only root", а в самом низу OK.
+Для установки групповой политики: Пуск -> в поиске "ADMC" -> заходишь за пользователя administrator -> В левом окне "Group policy Objects" -> lab.local -> в правом окне есть "Default Domain Policy" - галочку под Enforced. Далее нажимаешь ПКМ по "Default Domain Policy" -> edit (чтобы изменить групповую политику) -> User -> Administrative Templates -> ALT System -> Screensaver в этой папке есть несколько политик, которые нужно включить:
+
+Enable screen saver -> галочку под Enabled, а в самом низу OK.  (при бездействии включает заставку) 
+
+Lock your computer -> галочку под Enabled, в самом низу OK. (Блокировка компьютера)
+
+Logout after being locked -> галочку под Enabled, в самом низу OK.
+
+Operating mode -> галочку под Enabled, в options выбрать "Random themes", самом низу OK.
+
+Switch user after blocking -> галочку под Disabled, в самом низу OK.
+
+Для отчёта напиши, типа "Настроил именно эти политики, для большей безопасности данных. Если владельца долго нет за ПК, то постороннние люди не смогут им воспользоваться, так как для разблокировки требуется пароль пользователя"
+
 Под root:
 ```bash
 gpupdate
