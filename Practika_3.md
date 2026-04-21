@@ -668,8 +668,12 @@ dig -x 172.16.0.10 PTR +short
 iptables -F
 iptables -t nat -A POSTROUTING -o ens18 -j MASQUERADE
 iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -i ens18 -p tcp --dport 2222 -j ACCEPT
+iptables -A INPUT -i ens19 -p tcp --dport 2222 -j ACCEPT
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -p icmp -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
