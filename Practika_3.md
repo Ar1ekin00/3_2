@@ -637,7 +637,7 @@ nano /etc/samba/smb.conf
 ```
 *Записать:*
 ```bash
-[globals]
+[global]
    dns forwarder = 8.8.8.8
    allow dns updates = secure only
 ```
