@@ -580,7 +580,7 @@ kinit petrov@LAB.LOCAL
 ```bash
 kinit sidorov@LAB.LOCAL
 ```
-Для установки групповой политики: Пуск -> в поиске "ADMC" -> заходишь за пользователя administrator -> В левом окне "Group policy Objects" -> lab.local -> в правом окне есть "Default Domain Policy" - галочку под Enforced. Далее нажимаешь ПКМ по "Default Domain Policy" -> edit (чтобы изменить групповую политику) -> User -> Administrative Templates -> ALT System -> Screensaver в этой папке есть несколько политик, которые нужно включить:
+Для установки групповой политики: Пуск -> в поиске "ADMC" -> заходишь за пользователя administrator -> В левом окне "Group policy Objects" -> lab.local -> в правом окне есть "Default Domain Policy" - галочку под Enforced. Далее нажимаешь ПКМ по "Default Domain Policy" -> edit (чтобы изменить групповую политику) -> User -> Administrative Templates -> ALT System -> Mate settings -> Screensaver в этой папке есть несколько политик, которые нужно включить:
 
 Enable screen saver -> галочку под Enabled, а в самом низу OK.  (при бездействии включает заставку) 
 
@@ -617,13 +617,19 @@ gpresult
 kinit Administrator@LAB.LOCAL
 ```
 ```bash
-samba-tool dns add dc.lab.local lab.local srv A 172.16.0.20
-samba-tool dns add dc.lab.local lab.local moodle CNAME dc.lab.local 
-samba-tool dns add dc.lab.local lab.local web CNAME srv.lab.local
-samba-tool dns add dc.lab.local lab.local docker CNAME srv.lab.local
+samba-tool dns add dc.lab.local lab.local srv A 172.16.0.20 -U"LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local lab.local moodle.lab.local CNAME dc.lab.local
+-U"LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local lab.local web.lab.local CNAME srv.lab.local
+-U"LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local lab.local docker.lab.local CNAME srv.lab.local
+-U"LAB.LOCAL\Administrator%P@ssw0rd"
 samba-tool dns zonecreate dc.lab.local 0.16.172.in-addr.arpa
+-U"LAB.LOCAL\Administrator%P@ssw0rd"
 samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 10 PTR dc.lab.local
+-U"LAB.LOCAL\Administrator%P@ssw0rd"
 samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 20 PTR srv.lab.local
+-U"LAB.LOCAL\Administrator%P@ssw0rd"
 ```
 *В файле:*
 ```bash
