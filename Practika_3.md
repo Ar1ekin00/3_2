@@ -763,7 +763,7 @@ services:
       MYSQL_DATABASE: testdb
       MYSQL_USER: test
       MYSQL_PASSWORD: P@ssw0rd
-      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_ROOT_PASSWORD: toor
     volumes:
       - db_data:/var/lib/mysql
     restart: unless-stopped
