@@ -724,11 +724,11 @@ iptables -n -L
 **Команды:**
 Для тех, кто сделал по сырой версии - сначала удалить прошлые образы, контейнеры и т.д.:
 ```bash
-docker stop $(docker ps -aq) 2>/dev/null
-docker rm $(docker ps -aq) 2>/dev/null
-docker rmi $(docker images -q) 2>/dev/null
-docker volume rm $(docker volume ls -q) 2>/dev/null
-docker network rm $(docker network ls -q | grep -v "bridge\|host\|none") 2>/dev/null
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+docker rmi $(docker images -q)
+docker volume rm $(docker volume ls -q)
+docker network rm $(docker network ls -q | grep -v "bridge\|host\|none")
 ```
 ```bash
 apt-get install -y docker-engine net-tools
