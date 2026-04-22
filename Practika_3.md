@@ -738,6 +738,7 @@ chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 mkdir -p /mnt/iso
 mount /dev/sr0 /mnt/iso
+cp -r /mnt/iso /opt/testapp/
 docker load -i /mnt/iso/docker/site_latest.tar
 docker load -i /mnt/iso/docker/mariadb_latest.tar
 docker tag site:latest site_latest:latest
@@ -815,3 +816,5 @@ curl -I http://localhost:8080
 - В файле `index.php` укажите правильные учётные данные для подключения к БД.
 - Запустите веб-сервер и убедитесь в работоспособности приложения.
 - Основные параметры отметьте в отчёте.
+
+
