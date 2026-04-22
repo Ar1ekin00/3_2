@@ -164,6 +164,7 @@ fixed-address 172.16.0.20;
 host dc {
 hardware ethernet <свой mac-адрес>;
 fixed-address 172.16.0.10;
+}
 ```
 MAC-адрес отображается жёлтым, команда ip -c a 
 
@@ -561,7 +562,7 @@ samba-tool user show sidorov --attributes=distinguishedName
 **Команды:**
 ```bash
 apt-get -y remove alterator-datetime
-apt-get -y install task-auth-ad-sssd bind-utils alterator-auth alterator-gpupdate admc gpui gpupdate
+apt-get -y install task-auth-ad-sssd bind-utils alterator-auth alterator-gpupdate admc gpui gpupdate gpresult 
 ```
 Далее заходишь в cli с графической оболочкой, открываешь system management center -> authentication -> выбираешь Active Directory or ALT Domain, домен уже будет указан верный -> Apply
 
