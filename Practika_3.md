@@ -647,6 +647,7 @@ nano /etc/samba/smb.conf
 ### Для cli:
 Прямое разрешение CNAME:
 ```bash
+sudo apt-get install bind-utils
 nslookup moodle.lab.local
 nslookup web.lab.local
 nslookup docker.lab.local
