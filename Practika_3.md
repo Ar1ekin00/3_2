@@ -645,6 +645,7 @@ nano /etc/samba/smb.conf
 
 (Команды для проверки DNS) ->
 ### Для cli:
+**Команды:**
 Прямое разрешение CNAME:
 ```bash
 sudo apt-get install bind-utils
@@ -672,6 +673,7 @@ dig -x 172.16.0.10 PTR +short
 - Запретите все остальные входящие подключения из внешней сети во внутреннюю сеть `172.16.0.0/24`.
 - Активируйте и сохраните правила брандмауэра. Проверьте работоспособность фильтрации трафика и внесите основные параметры настройки в отчёт.
 ### Для isp:
+**Команды:**
 ```bash
 iptables -F
 iptables -t nat -A POSTROUTING -o ens18 -j MASQUERADE
@@ -717,14 +719,87 @@ iptables -n -L
 - Импортируйте образы в Docker, укажите в YAML-файле параметры подключения к СУБД: имя БД — `testdb`, пользователь `test` с паролем `P@ssw0rd`, порт приложения `8080`. При необходимости настройте другие параметры.
 - Приложение должно быть доступно для внешних подключений через порт `8080`.
 
-ОЧЕНЬ СЫРАЯ ВЕРСИЯ
-НО ФАЙЛЫ ВРОДЕ РАБОЧИЕ +-
-
+РАБОЧАЯ ВЕРСИЯ
+### Для srv:
+**Команды:**
+Для тех, кто сделал по сырой версии - сначала удалить прошлые образы, контейнеры и т.д.:
 ```bash
-КОМАНДЫ:
-apt-get install -y docker-engine docker-compose-v2
-systemctl enable --now docker 
-
-
+docker stop $(docker ps -aq) 2>/dev/null
+docker rm $(docker ps -aq) 2>/dev/null
+docker rmi $(docker images -q) 2>/dev/null
+docker volume rm $(docker volume ls -q) 2>/dev/null
+docker network rm $(docker network ls -q | grep -v "bridge\|host\|none") 2>/dev/null
 ```
+```bash
+apt-get install -y docker-engine net-tools
+systemctl enable --now docker
+curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+mkdir -p /mnt/iso
+mount /dev/sr0 /mnt/iso
+docker load -i /mnt/iso/docker/site_latest.tar
+docker load -i /mnt/iso/docker/mariadb_latest.tar
+docker tag site:latest site_latest:latest
+docker tag mariadb:10.11 mariadb_latest:latest
+docker rmi site:latest
+docker rmi mariadb:10.11
+mkdir -p /opt/testapp
+cd /opt/testapp
+```
+*В файле:*
+```bash
+nano docker-compose.yml
+```
+*Записать:*
+```bash
+version: '3.8'
 
+services:
+  db:
+    image: mariadb_latest:latest
+    container_name: db
+    environment:
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: P@ssw0rd
+      MYSQL_ROOT_PASSWORD: rootpass123
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - appnet
+
+  testapp:
+    image: site_latest:latest
+    container_name: testapp
+    ports:
+      - "8080:8000"
+    environment:
+      DB_TYPE: maria
+      DB_HOST: db
+      DB_NAME: testdb
+      DB_USER: test
+      DB_PASS: P@ssw0rd
+      DB_PORT: 3306
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - appnet
+
+volumes:
+  db_data:
+
+networks:
+  appnet:
+    driver: bridge
+```
+**Команды:**
+```bash
+docker compose up -d
+docker compose ps
+curl -I http://localhost:8080
+```
+### Для cli:
+(Проверка работоспособности сайта, для отчёта) -> на cli заходишь в браузер, вводишь в поисковик "172.16.0.20:8080" или"web.lab.local:8080" зайдёшь на сайт
