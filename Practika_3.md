@@ -807,7 +807,7 @@ curl -I http://localhost:8080
 
 ---
 
-### 8: (*) Развёртывание веб-приложения на сервере `srv`
+### 8: (*) Развёртывание веб-приложения на сервере `srv` 
 - Используйте веб-сервер Apache. В качестве системы управления базами данных используйте MariaDB.
 - Файлы веб-приложения и дамп базы данных находятся в директории `web` образа `Additional.iso`.
 - Выполните импорт схемы и данных из файла `dump.sql` в базу данных `webdb`.
@@ -817,4 +817,37 @@ curl -I http://localhost:8080
 - Запустите веб-сервер и убедитесь в работоспособности приложения.
 - Основные параметры отметьте в отчёте.
 
+НЕ ДОДЕЛАНО!!!
 
+**Команды:**
+```bash
+apt-get install -y mariadb apache2 php8.2 php8.2-mysqlnd
+systemctl enable --now mariadb httpd2
+cp -r /opt/testapp/iso/web/* /var/www/html/
+cp /mnt/iso/web/dump.sql /tmp/
+chown -R apache2:apache2 /var/www/html
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;
+mysql
+CREATE DATABASE webdb;
+CREATE USER 'web'@'localhost' IDENTIFIED BY 'P@ssw0rd';
+GRANT ALL PRIVILEGES ON webdb.* TO 'web'@'localhost';
+FLUSH PRIVILEGES;
+exit
+mariadb webdb < /tmp/dump.sql
+```
+
+*В файле:*
+```bash
+nano /var/www/html/index.php
+```
+*Изменить в самом начале:*
+```bash
+$servername = "localhost";
+$username = "web";
+$password = "P@ssw0rd";
+$dbname = "webdb";
+```
+**Команды:**
+```bash
+systemctl restart httpd2
