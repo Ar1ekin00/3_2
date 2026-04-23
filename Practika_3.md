@@ -822,17 +822,25 @@ curl -I http://localhost:8080
 apt-get install -y lamp-server
 systemctl enable --now httpd2
 systemctl enable --now mysqld
+mkdir -p /mnt/iso
+mkdir -p /opt/testapp
+mount /dev/sr0 /mnt/iso
+cp -r /mnt/iso /opt/testapp/
 mkdir -p /var/www/html/testapp
 cp /opt/testapp/iso/web/index.php /var/www/html/testapp/
 cp /opt/testapp/iso/web/logo.png /var/www/html/testapp/
 chown -R apache2:apache2 /var/www/html/testapp
 chmod -R 644 /var/www/html/testapp
 mysql -u root
+```
+```bash
 CREATE DATABASE webdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER 'web'@'localhost' IDENTIFIED BY 'P@ssw0rd';
 GRANT ALL PRIVILEGES ON webdb.* TO 'web'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
+```
+```bash
 mariadb -u web -p webdb < /opt/testapp/iso/web/dump.sql
 ```
 
