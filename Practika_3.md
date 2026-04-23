@@ -797,8 +797,8 @@ networks:
 ```
 **Команды:**
 ```bash
-docker compose up -d
-docker compose ps
+docker-compose up -d
+docker-compose ps
 curl -I http://localhost:8080
 ```
 ### Для cli:
