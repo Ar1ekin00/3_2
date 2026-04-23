@@ -840,6 +840,7 @@ GRANT ALL PRIVILEGES ON webdb.* TO 'web'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
 ```
+После следующей команды, вводишь пароль P@ssw0rd
 ```bash
 mariadb -u web -p webdb < /opt/testapp/iso/web/dump.sql
 ```
