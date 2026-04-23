@@ -803,7 +803,7 @@ docker compose ps
 curl -I http://localhost:8080
 ```
 ### Для cli:
-(Проверка работоспособности сайта, для отчёта) -> на cli заходишь в браузер, вводишь в поисковик "172.16.0.20:8080" или"web.lab.local:8080" зайдёшь на сайт
+(Проверка работоспособности сайта, для отчёта) -> на cli заходишь в браузер, вводишь в поисковик "172.16.0.20:8080" или "web.lab.local:8080" зайдёшь на сайт
 
 ---
 
@@ -817,29 +817,28 @@ curl -I http://localhost:8080
 - Запустите веб-сервер и убедитесь в работоспособности приложения.
 - Основные параметры отметьте в отчёте.
 
-НЕ ДОДЕЛАНО, СКОРЕЕ ВСЕГО НЕПРАВИЛЬНО!!!
-
 **Команды:**
 ```bash
-apt-get install -y mariadb apache2 php8.2 php8.2-mysqlnd
-systemctl enable --now mariadb httpd2
-cp -r /opt/testapp/iso/web/* /var/www/html/
-cp /mnt/iso/web/dump.sql /tmp/
-chown -R apache2:apache2 /var/www/html
-find /var/www/html -type d -exec chmod 755 {} \;
-find /var/www/html -type f -exec chmod 644 {} \;
-mysql
-CREATE DATABASE webdb;
+apt-get install -y lamp-server
+systemctl enable --now httpd2
+systemctl enable --now mysqld
+mkdir -p /var/www/html/testapp
+cp /opt/testapp/iso/web/index.php /var/www/html/testapp/
+cp /opt/testapp/iso/web/logo.png /var/www/html/testapp/
+chown -R apache2:apache2 /var/www/html/testapp
+chmod -R 644 /var/www/html/testapp
+mysql -u root
+CREATE DATABASE webdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER 'web'@'localhost' IDENTIFIED BY 'P@ssw0rd';
 GRANT ALL PRIVILEGES ON webdb.* TO 'web'@'localhost';
 FLUSH PRIVILEGES;
-exit
-mariadb webdb < /tmp/dump.sql
+EXIT;
+mariadb -u web -p webdb < /opt/testapp/iso/web/dump.sql
 ```
 
 *В файле:*
 ```bash
-nano /var/www/html/index.php
+nano /var/www/html/testapp/index.php
 ```
 *Изменить в самом начале:*
 ```bash
@@ -848,6 +847,15 @@ $username = "web";
 $password = "P@ssw0rd";
 $dbname = "webdb";
 ```
+
 **Команды:**
 ```bash
 systemctl restart httpd2
+chmod 755 /var/www /var/www/html /var/www/html/testapp
+chmod 644 /var/www/html/testapp/index.php
+```
+
+### Для cli:
+(Проверка работы web-приложения, для отчёта) -> на cli заходишь в браузер, вводишь в поисковик "web/testapp" зайдёшь на сайт
+
+---
