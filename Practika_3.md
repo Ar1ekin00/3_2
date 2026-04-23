@@ -893,3 +893,11 @@ mkfs.ext4 /dev/md0
 mkdir -p /srv/storage
 mount /dev/md0 /srv/storage
 ```
+*В файле:*
+```bash
+nano /etc/fstab
+```
+*Добавить:*
+```bash
+/dev/md0 /srv/storage ext4 defaults,nofail 0 0
+```
