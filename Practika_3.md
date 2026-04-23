@@ -886,18 +886,121 @@ chmod 644 /var/www/html/testapp/index.php
 ### Для srv:
 **Команды:**
 ```bash
+apt-get update
+apt-get install -y samba samba-client samba-winbind krb5-workstation attr acl ctdb mdadm
+systemctl stop smb nmb winbind
+```
+После ввода следующей команды, нажимаешь Y:
+```bash
 mdadm --create --verbose /dev/md0 --level=5 --raid-devices=3 /dev/vdb /dev/vdc /dev/vdd
+```
+```bash
 mdadm --detail --scan >> /etc/mdadm.conf
 mdadm --assemble --scan 
 mkfs.ext4 /dev/md0
 mkdir -p /srv/storage
 mount /dev/md0 /srv/storage
+echo "/dev/md0 /srv/storage ext4 defaults 0 0" >> /etc/fstab
+mkdir -p /srv/storage/{instructions,share,secret}
+chown -R root:root /srv/storage
+chmod 777 /srv/storage/share
+chmod 777 /srv/storage/instructions
+chmod 777 /srv/storage/secret
+echo "Public test file" > /srv/storage/share/public.txt
+echo "Secret document" > /srv/storage/secret/secret.txt
+echo "Instructions readme" > /srv/storage/instructions/readme.txt
+echo "search lab.local" >> /etc/resolv.conf
+rm -rf /var/lib/samba/winbind/
+mkdir -p /var/lib/samba /var/cache/samba /var/log/samba
+mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
+mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
+mkdir -p /var/lib/samba/winbindd_privileged
+mkdir -p /etc/samba/
+mkdir -p /var/lib/samba/winbind /var/lib/samba/private
+sed -i 's/\(passwd:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
+sed -i 's/\(group:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
+chown root:root /var/lib/samba /var/lib/samba/*
+chmod 755 /var/lib/samba /var/lib/samba/* /var/lib/samba/private /var/lib/samba/winbind
 ```
 *В файле:*
 ```bash
-nano /etc/fstab
+nano /etc/krb5.conf
 ```
-*Добавить:*
+*Записать:*
 ```bash
-/dev/md0 /srv/storage ext4 defaults,nofail 0 0
+[libdefaults]
+    default_realm = LAB.LOCAL
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+
+[realms]
+    LAB.LOCAL = {
+        kdc = dc.lab.local
+        admin_server = dc.lab.local
+    }
+[domain_realm]
+    .lab.local = LAB.LOCAL
+    lab.local = LAB.LOCAL
 ```
+*В файле:*
+```bash
+nano /etc/samba/smb.conf
+```
+*Записать:*
+```bash
+[global]
+   workgroup = LAB
+   security = ADS
+   realm = LAB.LOCAL
+   
+   idmap config * : backend = tdb
+   idmap config * : range = 3000-7999
+   idmap config LAB : backend = rid
+   idmap config LAB : range = 10000-999999
+   
+   winbind use default domain = yes
+   winbind enum users = yes
+   winbind enum groups = yes
+   
+   server min protocol = NT1
+   ntlm auth = yes
+   
+   vfs objects = acl_xattr
+   map acl inherit = yes
+
+[instructions]
+   path = /srv/storage/instructions
+   browsable = yes
+   read only = yes
+   force user = root
+   force group = root
+   create mask = 0644
+   directory mask = 0755
+
+[share]
+   path = /srv/storage/share
+   browsable = yes
+   writable = yes
+   guest ok = yes
+   create mask = 0664
+   directory mask = 0775
+
+[secret]
+   path = /srv/storage/secret
+   browsable = no
+   writable = yes
+   admin users = administrator
+   create mask = 0660
+   directory mask = 0770
+```
+**Команды:**
+```bash
+net ads join -U administrator@LAB.LOCAL --no-dns-updates
+systemctl start winbind
+sleep 5
+systemctl start smb nmb
+systemctl enable --now winbind smb nmb
+```
+
+### Для cli:
+(Для отчёта) -> зайти на cli через графическую оболочку, открыть любую папку в строке поиска написать "smb://srv.lab.local/share" откроется папка, в которой можно создать любой файл. Можете создать файл на cli, далее открыть терминал srv и ввести "smbclient //localhost/share" -> пароль P@ssw0rd -> командой ls вывести содержимое каталога, в том числе, созданный файл.
