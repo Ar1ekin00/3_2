@@ -1009,7 +1009,7 @@ nano /etc/samba/smb.conf
 net ads join -U administrator@LAB.LOCAL --no-dns-updates
 testparm
 systemctl start winbind
-sleep 5
+sleep 10
 systemctl start smb nmb
 systemctl enable --now winbind smb nmb
 ```
