@@ -905,14 +905,14 @@ mount /dev/md0 /srv/storage
 echo "/dev/md0 /srv/storage ext4 defaults 0 0" >> /etc/fstab
 mkdir -p /srv/storage/{instructions,share,secret}
 chown -R root:root /srv/storage
-chmod 775 /srv/storage/share
-chmod 755 /srv/storage/instructions
-chmod 770 /srv/storage/secret
+chmod 777 /srv/storage/*
+chmod 777 /srv/storage
 echo "Public test file" > /srv/storage/share/public.txt
 echo "Secret document" > /srv/storage/secret/secret.txt
 echo "Instructions readme" > /srv/storage/instructions/readme.txt
 echo "search lab.local" >> /etc/resolv.conf
 rm -rf /var/lib/samba/winbind/
+mkdir -p /var/log/samba/
 mkdir -p /var/lib/samba /var/cache/samba /var/log/samba
 mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
 mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
@@ -973,11 +973,10 @@ nano /etc/samba/smb.conf
 [instructions]
    path = /srv/storage/instructions
    browsable = yes
-   read only = yes
-   force user = root
-   force group = root
+   writable = yes
+   guest ok = yes
    create mask = 0644
-   directory mask = 0755
+   directory mask = 0775
 
 [share]
    path = /srv/storage/share
@@ -989,11 +988,11 @@ nano /etc/samba/smb.conf
 
 [secret]
    path = /srv/storage/secret
-   browsable = no
+   browsable = yes
    writable = yes
-   admin users = administrator
+   guest ok = yes
    create mask = 0660
-   directory mask = 0770
+   directory mask = 0775
 ```
 **Команды:**
 ```bash
