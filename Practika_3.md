@@ -913,11 +913,11 @@ echo "Instructions readme" > /srv/storage/instructions/readme.txt
 echo "search lab.local" >> /etc/resolv.conf
 rm -rf /var/lib/samba/winbind/
 mkdir -p /var/log/samba/
-mkdir -p /var/lib/samba /var/cache/samba /var/log/samba
+mkdir -p /etc/samba/
+mkdir -p /var/lib/samba /var/cache/samba
 mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
 mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
 mkdir -p /var/lib/samba/winbindd_privileged
-mkdir -p /etc/samba/
 mkdir -p /var/lib/samba/winbind /var/lib/samba/private
 sed -i 's/\(passwd:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 sed -i 's/\(group:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
