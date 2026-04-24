@@ -1062,6 +1062,7 @@ smb: \> !cd /tmp            # сменить локальную папку
 -> командой ls вывести содержимое каталога, в том числе, созданный файл. Или создать файл на srv, и он должен появится на cli. 
 
 Через терминал можно зайти только в конкреный каталог!!! 
+
 То есть команда "smbclient //localhost/share -U ivanov" - не работает. Либо "smbclient //localhost/share -U ivanov", либо "smbclient //localhost/instructions -U ivanov", либо "smbclient //localhost/secret -U ivanov".
 
 ### Для srv:
