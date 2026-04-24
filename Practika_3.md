@@ -904,9 +904,9 @@ mount /dev/md0 /srv/storage
 echo "/dev/md0 /srv/storage ext4 defaults 0 0" >> /etc/fstab
 mkdir -p /srv/storage/{instructions,share,secret}
 chown -R root:root /srv/storage
-chmod 777 /srv/storage/share
-chmod 777 /srv/storage/instructions
-chmod 777 /srv/storage/secret
+chmod 775 /srv/storage/share
+chmod 755 /srv/storage/instructions
+chmod 770 /srv/storage/secret
 echo "Public test file" > /srv/storage/share/public.txt
 echo "Secret document" > /srv/storage/secret/secret.txt
 echo "Instructions readme" > /srv/storage/instructions/readme.txt
