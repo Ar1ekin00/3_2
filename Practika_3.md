@@ -904,13 +904,6 @@ mkdir -p /srv/storage
 mount /dev/md0 /srv/storage
 echo "/dev/md0 /srv/storage ext4 defaults 0 0" >> /etc/fstab
 mkdir -p /srv/storage/{instructions,share,secret}
-chown -R root:root /srv/storage
-chmod 777 /srv/storage/*
-chmod 777 /srv/storage
-echo "Public test file" > /srv/storage/share/public.txt
-echo "Secret document" > /srv/storage/secret/secret.txt
-echo "Instructions readme" > /srv/storage/instructions/readme.txt
-echo "search lab.local" >> /etc/resolv.conf
 rm -rf /var/lib/samba/winbind/
 mkdir -p /var/log/samba/
 mkdir -p /etc/samba/
@@ -919,9 +912,20 @@ mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
 mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
 mkdir -p /var/lib/samba/winbindd_privileged
 mkdir -p /var/lib/samba/winbind /var/lib/samba/private
+chown -R root:root /srv/storage
+chmod 755 /srv/storage
+chmod 777 /srv/storage/share
+chmod 755 /srv/storage/instructions  
+chmod 700 /srv/storage/secret
+echo "Public test file" > /srv/storage/share/public.txt
+echo "Secret document" > /srv/storage/secret/secret.txt  
+echo "Instructions readme" > /srv/storage/instructions/readme.txt
+echo "search lab.local" >> /etc/resolv.conf
 sed -i 's/\(passwd:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 sed -i 's/\(group:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 chown root:root /var/lib/samba /var/lib/samba/*
+chmod 755 /var/{lib,cache,log,run}/samba
+chmod 750 /var/lib/samba/winbindd_privileged
 chmod 755 /var/lib/samba /var/lib/samba/* /var/lib/samba/private /var/lib/samba/winbind
 ```
 *В файле:*
@@ -966,37 +970,43 @@ nano /etc/samba/smb.conf
    
    server min protocol = NT1
    ntlm auth = yes
-   
    vfs objects = acl_xattr
    map acl inherit = yes
 
+# 1. instructions – ТОЛЬКО ЧТЕНИЕ (кроме admins RW)
 [instructions]
    path = /srv/storage/instructions
    browsable = yes
-   writable = yes
-   guest ok = yes
+   read only = yes
+   writable = yes                    
+   read only = no
+   valid users = @LAB\managers @LAB\admins
+   admin users = @LAB\admins
    create mask = 0644
-   directory mask = 0775
+   directory mask = 0755
 
+# 2. share – RW ДЛЯ ВСЕХ доменных пользователей
 [share]
    path = /srv/storage/share
    browsable = yes
    writable = yes
-   guest ok = yes
    create mask = 0664
    directory mask = 0775
 
+# 3. secret – ТОЛЬКО admins RW
 [secret]
    path = /srv/storage/secret
-   browsable = yes
+   browsable = no
    writable = yes
-   guest ok = yes
+   valid users = @LAB\admins
+   admin users = @LAB\admins
    create mask = 0660
-   directory mask = 0775
+   directory mask = 0770
 ```
 **Команды:**
 ```bash
 net ads join -U administrator@LAB.LOCAL --no-dns-updates
+testparm
 systemctl start winbind
 sleep 5
 systemctl start smb nmb
