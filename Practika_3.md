@@ -924,9 +924,10 @@ echo "search lab.local" >> /etc/resolv.conf
 sed -i 's/\(passwd:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 sed -i 's/\(group:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 chown root:root /var/lib/samba /var/lib/samba/*
+chmod 0750 /var/lib/samba/winbindd_privileged
 chmod 755 /var/{lib,cache,log,run}/samba
-chmod 750 /var/lib/samba/winbindd_privileged
 chmod 755 /var/lib/samba /var/lib/samba/* /var/lib/samba/private /var/lib/samba/winbind
+chmod 0750 /var/lib/samba/winbindd_privileged
 ```
 *В файле:*
 ```bash
