@@ -1063,7 +1063,10 @@ smb: \> !cd /tmp            # сменить локальную папку
 
 Через терминал можно зайти только в конкреный каталог!!! 
 
-То есть команда "smbclient //localhost/share -U ivanov" - не работает. Либо "smbclient //localhost/share -U ivanov", либо "smbclient //localhost/instructions -U ivanov", либо "smbclient //localhost/secret -U ivanov".
+То есть команда "smbclient //localhost/share -U ivanov" - не работает. 
+1. Либо "smbclient //localhost/share -U ivanov"
+2. Либо "smbclient //localhost/instructions -U ivanov"
+3. Либо "smbclient //localhost/secret -U ivanov"
 
 ### Для srv:
 
