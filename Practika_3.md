@@ -1007,9 +1007,8 @@ nano /etc/samba/smb.conf
 **Команды:**
 ```bash
 net ads join -U administrator@LAB.LOCAL --no-dns-updates
-testparm
 systemctl start winbind
-sleep 10
+sleep 20
 systemctl start smb nmb
 systemctl enable --now winbind smb nmb
 ```
