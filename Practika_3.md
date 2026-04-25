@@ -904,7 +904,6 @@ mkdir -p /srv/storage
 mount /dev/md0 /srv/storage
 echo "/dev/md0 /srv/storage ext4 defaults 0 0" >> /etc/fstab
 mkdir -p /srv/storage/{instructions,share,secret}
-rm -rf /var/lib/samba/winbind/
 mkdir -p /var/log/samba/
 mkdir -p /etc/samba/
 mkdir -p /var/lib/samba /var/cache/samba
