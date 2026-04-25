@@ -901,12 +901,6 @@ mkdir -p /srv/storage
 mount /dev/md0 /srv/storage
 echo "/dev/md0 /srv/storage ext4 defaults 0 0" >> /etc/fstab
 mkdir -p /srv/storage/{instructions,share,secret}
-mkdir -p /var/log/samba/
-mkdir -p /etc/samba/
-mkdir -p /var/lib/samba /var/cache/samba
-mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
-mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
-mkdir -p /var/lib/samba/winbindd_privileged
 chown -R root:root /srv/storage
 chmod 755 /srv/storage
 chmod 777 /srv/storage/share
@@ -915,7 +909,14 @@ chmod 700 /srv/storage/secret
 echo "Public test file" > /srv/storage/share/public.txt
 echo "Secret document" > /srv/storage/secret/secret.txt  
 echo "Instructions readme" > /srv/storage/instructions/readme.txt
-echo "search lab.local" >> /etc/resolv.conf
+
+mkdir -p /var/log/samba/
+mkdir -p /etc/samba/
+mkdir -p /var/lib/samba /var/cache/samba
+mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
+mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
+mkdir -p /var/lib/samba/winbindd_privileged
+
 sed -i 's/\(passwd:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 sed -i 's/\(group:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 chmod 0777 /var/lib/samba/winbindd_privileged
