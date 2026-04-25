@@ -1011,41 +1011,6 @@ systemctl start smb nmb
 systemctl enable --now winbind smb nmb
 ```
 
-КОМАНДЫ ВНУТРИ FTP-КЛИЕНТА:
-
-**Команды:**
-
-```bash
-smb: \> help          # показать все команды
-smb: \> ?             # краткая справка
-
-# Навигация
-smb: \> ls            # список файлов (вы уже пробовали)
-smb: \> dir           # то же что ls
-smb: \> cd folder     # войти в папку  
-smb: \> cd ..         # на уровень выше
-smb: \> pwd           # текущая папка
-
-# Работа с файлами
-smb: \> get public.txt      # скачать public.txt локально
-smb: \> get public.txt ./   # сохранить в текущую папку
-smb: \> put local.txt       # загрузить local.txt на сервер
-
-# Чтение файла
-smb: \> more public.txt     # показать содержимое
-smb: \> type public.txt     # то же что more
-
-# Множественные файлы
-smb: \> mget *.txt          # скачать все .txt
-smb: \> mput *.txt          # загрузить все .txt
-smb: \> prompt              # отключить подтверждения
-
-# Локальные команды (на вашей машине)
-smb: \> !ls                 # ls локальной папки  
-smb: \> !pwd                # текущая локальная папка
-smb: \> !cd /tmp            # сменить локальную папку
-```
-
 ### Для cli:
 
 (Для отчёта): 
