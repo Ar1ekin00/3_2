@@ -684,6 +684,7 @@ iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -A INPUT -p icmp -j ACCEPT
+iptables -A INPUT -i ens19 -p udp --dport 123 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
