@@ -917,12 +917,12 @@ mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
 mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
 mkdir -p /var/lib/samba/winbindd_privileged
 
+chmod 0755 /var/lib/samba /var/cache/samba /var/log/samba
+chmod 0700 /var/lib/samba/private
+chmod 0750 /var/lib/samba/winbindd_privileged
+
 sed -i 's/\(passwd:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
 sed -i 's/\(group:.*files.*\)/\1 winbind/' /etc/nsswitch.conf
-chmod 0777 /var/lib/samba/winbindd_privileged
-chmod 0755 /var/{lib,cache,log,run}/samba
-chmod 0755 /var/lib/samba /var/lib/samba/* /var/lib/samba/private /var/lib/samba/winbind
-chmod 0777 /var/lib/samba/winbindd_privileged
 ```
 *В файле:*
 ```bash
