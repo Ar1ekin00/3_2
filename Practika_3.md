@@ -460,8 +460,7 @@ log measurements statistics tracking
 **Команды:**
 ```bash
 systemctl enable --now chronyd
-systemctl restart network
-systemctl restart chronyd
+sleep 10
 ntpdate -q 172.16.0.1
 chronyc tracking
 chronyc sources -v
@@ -489,8 +488,7 @@ server 172.16.0.1
 **Команды:**
 ```bash
 systemctl enable --now chronyd
-systemctl restart network
-systemctl restart chronyd
+sleep 10
 ```
 (Команды для проверки, для отчёта) ->
 ```bash
@@ -1004,7 +1002,7 @@ nano /etc/samba/smb.conf
 ```bash
 net ads join -U administrator@LAB.LOCAL --no-dns-updates
 systemctl start winbind
-sleep 20
+sleep 10
 systemctl start smb nmb
 systemctl enable --now winbind smb nmb
 ```
