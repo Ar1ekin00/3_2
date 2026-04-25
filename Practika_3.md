@@ -438,6 +438,7 @@ ansible-playbook -i inventory.ini install_htop.yml
 **Команды:**
 ```bash
 apt-get -y install chrony ntpdate
+rm -rf /etc/chrony.conf
 ```
 *В файле:*
 ```bash
@@ -469,6 +470,7 @@ chronyc sources -v
 **Команды:**
 ```bash
 apt-get -y install chrony ntpdate
+rm -rf /etc/chrony.conf
 ```
 *В файле:*
 ```bash
@@ -483,10 +485,6 @@ hwtimestamp *
 ntsdumpdir /var/lib/chrony
 logdir /var/log/chrony
 server 172.16.0.1
-```
-Закомментировать строку ->
-```bash
-#pool pool.ntp.org iburst
 ```
 **Команды:**
 ```bash
