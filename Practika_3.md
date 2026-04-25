@@ -911,7 +911,7 @@ mkdir -p /var/lib/samba /var/cache/samba
 mkdir -p /var/run/samba /var/lib/samba/lock /var/lib/samba/printers
 mkdir -p /var/lib/samba/private /var/lib/samba/msg.sock
 mkdir -p /var/lib/samba/winbindd_privileged
-mkdir -p /var/lib/samba/winbind /var/lib/samba/private
+mkdir -p /var/lib/samba/private
 chown -R root:root /srv/storage
 chmod 755 /srv/storage
 chmod 777 /srv/storage/share
