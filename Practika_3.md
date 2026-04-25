@@ -1012,7 +1012,9 @@ systemctl enable --now winbind smb nmb
 ```
 
 КОМАНДЫ ВНУТРИ FTP-КЛИЕНТА:
+
 **Команды:**
+
 ```bash
 smb: \> help          # показать все команды
 smb: \> ?             # краткая справка
