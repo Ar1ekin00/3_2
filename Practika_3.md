@@ -886,7 +886,7 @@ chmod 644 /var/www/html/testapp/index.php
 **Команды:**
 ```bash
 apt-get update
-apt-get install -y samba samba-client samba-winbind krb5-workstation attr acl ctdb mdadm
+apt-get install -y samba samba-client samba-winbind samba-winbind-clients krb5-workstation attr acl ctdb mdadm
 systemctl stop smb nmb winbind
 ```
 После ввода следующей команды, нажимаешь Y:
@@ -955,27 +955,29 @@ nano /etc/samba/smb.conf
    security = ADS
    realm = LAB.LOCAL
    
-   idmap config * : backend = tdb
-   idmap config * : range = 3000-7999
    idmap config LAB : backend = rid
    idmap config LAB : range = 10000-999999
-   
+
+   idmap config * : backend = tdb
+   idmap config * : range = 3000-7999
+
    winbind use default domain = yes
    winbind enum users = yes
    winbind enum groups = yes
+   winbind refresh tickets = yes
+
    
    server min protocol = NT1
    ntlm auth = yes
    vfs objects = acl_xattr
    map acl inherit = yes
 
-# 1. instructions – ТОЛЬКО ЧТЕНИЕ (кроме admins RW)
+# 1. instructions  ТОЛЬКО ЧТЕНИЕ (кроме admins RW)
 [instructions]
    path = /srv/storage/instructions
    browsable = yes
-   read only = yes
-   writable = yes                    
    read only = no
+   writable = yes                   
    valid users = @LAB\managers @LAB\admins
    admin users = @LAB\admins
    create mask = 0644
@@ -986,6 +988,7 @@ nano /etc/samba/smb.conf
    path = /srv/storage/share
    browsable = yes
    writable = yes
+   read only = no
    create mask = 0664
    directory mask = 0775
 
@@ -1003,7 +1006,7 @@ nano /etc/samba/smb.conf
 ```bash
 net ads join -U administrator@LAB.LOCAL --no-dns-updates
 systemctl start winbind
-sleep 10
+sleep 10  # Дать winbind время на инициализацию
 systemctl start smb nmb
 systemctl enable --now winbind smb nmb
 ```
