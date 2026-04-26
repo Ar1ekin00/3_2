@@ -231,7 +231,7 @@ EDITOR=nano visudo
 *Записать:*
 ```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
-monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /bin/df, /usr/bin/free, /sbin/journalctl, /sbin/systemctl status *
 ```
 
 *В файле:*
