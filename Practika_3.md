@@ -189,7 +189,7 @@ EDITOR=nano visudo
 *Записать:*
 ```bash
 admin ALL=(root:ALL) NOPASSWD: ALL
-monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/sbin/systemctl status *
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/bin/systemctl status *
 ```
 *В файле:*
 ```bash
@@ -212,7 +212,50 @@ systemctl enable --now sshd
 systemctl restart sshd
 ```
 
-### Для dc, srv, cli:
+### Для dc, srv:
+**Команды:**
+```bash
+systemctl restart network
+apt-get update
+apt-get -y install sudo htop openssh nano python3-module-setuptools python3-dev python3-module-distutils-extra
+useradd -m -s /bin/bash admin
+echo "admin:P@ssw0rd" | chpasswd
+useradd -m -s /bin/bash monitor
+echo "monitor:P@ssw0rd" | chpasswd
+chmod 4755 /usr/bin/sudo
+```
+*В файле:*
+```bash
+EDITOR=nano visudo
+```
+*Записать:*
+```bash
+admin ALL=(root:ALL) NOPASSWD: ALL
+monitor ALL=(root:ALL) NOPASSWD: /usr/bin/htop, /usr/bin/df, /usr/bin/free, /usr/bin/journalctl, /usr/bin/systemctl status *
+```
+
+*В файле:*
+```bash
+nano /etc/openssh/sshd_config
+```
+*Записать:*
+```bash
+Port 2222
+Banner /etc/openssh/banner.txt
+MaxAuthTries 2
+PermitRootLogin no
+AllowUsers monitor admin
+PubkeyAuthentication yes
+PasswordAuthentication yes 
+```
+**Команды:**
+```bash
+echo «Authorized access only» > /etc/openssh/banner.txt
+systemctl enable --now sshd
+systemctl restart sshd
+```
+
+### Для cli:
 **Команды:**
 ```bash
 systemctl restart network
