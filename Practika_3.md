@@ -866,6 +866,9 @@ echo "Public test file" > /srv/storage/share/public.txt
 echo "Secret document" > /srv/storage/secret/secret.txt  
 echo "Instructions readme" > /srv/storage/instructions/readme.txt
 
+rm -rf /etc/krb5.conf
+rm -rf /etc/samba/smb.conf
+
 mkdir -p /var/log/samba/
 mkdir -p /etc/samba/
 mkdir -p /var/lib/samba /var/cache/samba
