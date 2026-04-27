@@ -871,7 +871,7 @@ mdadm --assemble --scan
 mkfs.ext4 /dev/md0
 mkdir -p /srv/storage
 mount /dev/md0 /srv/storage
-echo "/dev/md0 /srv/storage ext4 defaults 0 0" >> /etc/fstab
+UUID=$(blkid -s UUID -o value /dev/md0) && echo "UUID=$UUID /srv/storage ext4 defaults 0 0" >> /etc/fstab
 mkdir -p /srv/storage/{instructions,share,secret}
 chown -R root:root /srv/storage
 chmod 755 /srv/storage
