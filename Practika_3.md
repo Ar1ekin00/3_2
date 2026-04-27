@@ -442,12 +442,6 @@ nano /etc/chrony.conf
 *Записать:*
 ```bash
 server 172.16.0.1 iburst
-driftfile /var/lib/chrony/drift
-makestep 1.0 3
-rtcsync
-hwtimestamp *
-ntsdumpdir /var/lib/chrony
-logdir /var/log/chrony
 ```
 **Команды:**
 ```bash
