@@ -588,18 +588,12 @@ kinit Administrator@LAB.LOCAL
 ```
 ```bash
 samba-tool dns add dc.lab.local lab.local srv A 172.16.0.20 -U "LAB.LOCAL\Administrator%P@ssw0rd"
-samba-tool dns add dc.lab.local lab.local moodle.lab.local CNAME dc.lab.local
--U "LAB.LOCAL\Administrator%P@ssw0rd"
-samba-tool dns add dc.lab.local lab.local web.lab.local CNAME srv.lab.local
--U "LAB.LOCAL\Administrator%P@ssw0rd"
-samba-tool dns add dc.lab.local lab.local docker.lab.local CNAME srv.lab.local
--U "LAB.LOCAL\Administrator%P@ssw0rd"
-samba-tool dns zonecreate dc.lab.local 0.16.172.in-addr.arpa
--U "LAB.LOCAL\Administrator%P@ssw0rd"
-samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 10 PTR dc.lab.local
--U "LAB.LOCAL\Administrator%P@ssw0rd"
-samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 20 PTR srv.lab.local
--U "LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local lab.local moodle.lab.local CNAME dc.lab.local -U "LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local lab.local web.lab.local CNAME srv.lab.local -U "LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local lab.local docker.lab.local CNAME srv.lab.local -U "LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns zonecreate dc.lab.local 0.16.172.in-addr.arpa -U "LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 10 PTR dc.lab.local -U "LAB.LOCAL\Administrator%P@ssw0rd"
+samba-tool dns add dc.lab.local 0.16.172.in-addr.arpa 20 PTR srv.lab.local -U "LAB.LOCAL\Administrator%P@ssw0rd"
 ```
 *В файле:*
 ```bash
