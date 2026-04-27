@@ -1005,7 +1005,7 @@ session         optional        pam_mount.so disable_interactive
 ```bash
 /etc/security/pam_mount.conf.xml
 ```
-*Записать в конце ПЕРЕД строкой </pam_mount> и ДО строки <mkmountpoint enable="1" remove="true" />. Последнии строки файла должны выглядеть так:*
+*Записать в конце ПЕРЕД строкой </pam_mount>. Последние строки файла должны выглядеть так:*
 ```bash
 <mkmountpoint enable="1" remove="true" />
 
