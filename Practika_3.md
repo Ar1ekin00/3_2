@@ -989,12 +989,38 @@ systemctl enable --now winbind smb nmb
 ### Для cli:
 **Команды:**
 ```bash
-apt-get install pam_mount cifs-utils
-apt-get install systemd-settings-enable-kill-user-processes
-
-
+apt-get install pam_mount cifs-utils systemd-settings-enable-kill-user-processes
+```
+*В файле:*
+```bash
+nano /etc/pam.d/system-auth
+```
+*Записать в самый конец файла:*
+```bash
+session         [success=1 default=ignore] pam_succeed_if.so  service = systemd-user quiet
+session         optional        pam_mount.so disable_interactive
 ```
 
+*В файле:*
+```bash
+/etc/security/pam_mount.conf.xml
+```
+*Записать в конце ПЕРЕД строкой </pam_mount> и ДО строки <mkmountpoint enable="1" remove="true" />. Последнии строки файла должны выглядеть так:*
+```bash
+<mkmountpoint enable="1" remove="true" />
+
+<volume uid="10000-400000000" fstype="cifs" server="srv.lab.local" path="share" mountpoint="~/share" options="sec=krb5i,cruid=%(USERUID),nounix,uid=%(USERUID),gid=%(USERGID),file_mode=0664,dir_mode=0775" />
+
+<volume uid="10000-400000000" fstype="cifs" server="srv.lab.local" path="instructions" mountpoint="~/instructions" options="sec=krb5i,cruid=%(USERUID),nounix,uid=%(USERUID),gid=%(USERGID),file_mode=0644,dir_mode=0755" />
+
+<volume uid="10000-400000000" fstype="cifs" server="srv.lab.local" path="secret" mountpoint="~/secret" sgrp="admins" options="sec=krb5i,cruid=%(USERUID),nounix,uid=%(USERUID),gid=%(USERGID),file_mode=0660,dir_mode=0770" />
+
+</pam_mount>
+```
+**Команды:**
+```bash
+reboot
+```
 
 ### Для cli:
 
