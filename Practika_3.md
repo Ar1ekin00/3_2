@@ -986,7 +986,7 @@ systemctl start smb nmb
 systemctl enable --now winbind smb nmb
 ```
 
-### Для cli:
+### Для cli (монтирование каталогов instructions, share и secret):
 **Команды:**
 ```bash
 apt-get install pam_mount cifs-utils systemd-settings-enable-kill-user-processes
@@ -1043,6 +1043,9 @@ reboot
 1. Либо "smbclient //localhost/share -U ivanov"
 2. Либо "smbclient //localhost/instructions -U ivanov"
 3. Либо "smbclient //localhost/secret -U ivanov"
+
+P.S.
+Если сделали монтирование сетевых каталогов, то они просто будут находится на рабочем столе пользователя
 
 ### Для srv:
 
