@@ -1104,6 +1104,225 @@ smb: \> !cd /tmp            # сменить локальную папку
 - Перенастройте веб-серверы и контейнерный прокси на работу по протоколу HTTPS с привязкой новых сертификатов. Настройте автоматическое перенаправление всех входящих HTTP-запросов на HTTPS с использованием кода статуса 301.
 - Убедитесь, что при обращении к приложениям по именам `moodle.lab.local`, `web.lab.local` и `docker.lab.local` у браузера клиента не возникает предупреждений о недоверенном соединении.
 
-### Для dc:
-**Команды:**
+### Шаг 1: Создаём CA на srv
+
 ```bash
+mkdir -p /etc/ssl/CA/{certs,private,newcerts}
+chmod 700 /etc/ssl/CA/private
+echo 01 > /etc/ssl/CA/serial
+touch /etc/ssl/CA/index.txt
+
+# Ключ CA
+openssl genrsa -out /etc/ssl/CA/private/ca.key 4096
+
+# Корневой сертификат (365 дней)
+openssl req -new -x509 -days 365 -key /etc/ssl/CA/private/ca.key \
+  -out /etc/ssl/CA/certs/ca.crt \
+  -subj "/C=RU/ST=Moscow/L=Moscow/O=LAB/CN=LAB-CA"
+```
+
+### Шаг 2: Выпускаем сертификат для srv.lab.local
+
+```bash
+openssl genrsa -out /etc/ssl/CA/private/srv.key 2048
+
+openssl req -new -key /etc/ssl/CA/private/srv.key \
+  -out /etc/ssl/CA/srv.csr \
+  -subj "/C=RU/ST=Moscow/L=Moscow/O=LAB/CN=srv.lab.local"
+
+cat > /etc/ssl/CA/srv_ext.cnf << 'EOF'
+[v3_req]
+subjectAltName = @alt_names
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+[alt_names]
+DNS.1 = srv.lab.local
+DNS.2 = web.lab.local
+DNS.3 = docker.lab.local
+EOF
+
+openssl x509 -req -days 365 \
+  -in /etc/ssl/CA/srv.csr \
+  -CA /etc/ssl/CA/certs/ca.crt \
+  -CAkey /etc/ssl/CA/private/ca.key \
+  -CAcreateserial \
+  -out /etc/ssl/CA/certs/srv.crt \
+  -extfile /etc/ssl/CA/srv_ext.cnf \
+  -extensions v3_req
+
+# Проверяем
+openssl x509 -noout -subject -issuer -dates -in /etc/ssl/CA/certs/srv.crt
+```
+
+### Шаг 3: Копируем сертификаты в правильное место
+
+> На ALT Linux Apache ищет сертификаты в `/var/lib/ssl/`, а не в `/etc/ssl/`
+
+```bash
+mkdir -p /var/lib/ssl/certs /var/lib/ssl/private
+
+cp /etc/ssl/CA/certs/srv.crt /var/lib/ssl/certs/srv.crt
+cp /etc/ssl/CA/private/srv.key /var/lib/ssl/private/srv.key
+cp /etc/ssl/CA/certs/ca.crt /var/lib/ssl/certs/ca.crt
+chmod 600 /var/lib/ssl/private/srv.key
+```
+
+### Шаг 4: Устанавливаем SSL модуль для Apache
+
+> На ALT Linux mod_ssl не установлен по умолчанию и называется `apache2-mod_ssl`
+
+```bash
+apt-get install -y apache2-mod_ssl
+
+# Включаем модули
+ln -s /etc/httpd2/conf/mods-available/ssl.load /etc/httpd2/conf/mods-enabled/ssl.load
+ln -s /etc/httpd2/conf/mods-available/proxy.load /etc/httpd2/conf/mods-enabled/proxy.load
+ln -s /etc/httpd2/conf/mods-available/proxy.conf /etc/httpd2/conf/mods-enabled/proxy.conf
+ln -s /etc/httpd2/conf/mods-available/proxy_http.load /etc/httpd2/conf/mods-enabled/proxy_http.load
+
+# Проверяем
+httpd2 -M 2>&1 | grep ssl
+```
+
+### Шаг 5: Добавляем порт 443
+
+```bash
+# Проверяем текущий конфиг портов
+cat /etc/httpd2/conf/ports-enabled/http.conf
+
+# Добавляем 443 если нет (НЕ добавляй дважды!)
+echo "Listen 443" >> /etc/httpd2/conf/ports-enabled/http.conf
+```
+
+### Шаг 6: Создаём конфиг виртуальных хостов
+
+```bash
+cat > /etc/httpd2/conf/sites-available/lab-ssl.conf << 'EOF'
+<IfModule ssl_module>
+
+    <VirtualHost *:80>
+        ServerName web.lab.local
+        Redirect permanent / https://web.lab.local/
+    </VirtualHost>
+
+    <VirtualHost *:80>
+        ServerName docker.lab.local
+        Redirect permanent / https://docker.lab.local/
+    </VirtualHost>
+
+    <VirtualHost *:443>
+        ServerName web.lab.local
+        DocumentRoot /var/www/html/testapp
+
+        SSLEngine on
+        SSLCertificateFile /var/lib/ssl/certs/srv.crt
+        SSLCertificateKeyFile /var/lib/ssl/private/srv.key
+        SSLCACertificateFile /var/lib/ssl/certs/ca.crt
+
+        <Directory /var/www/html/testapp>
+            AllowOverride All
+            Require all granted
+        </Directory>
+    </VirtualHost>
+
+    <VirtualHost *:443>
+        ServerName docker.lab.local
+
+        SSLEngine on
+        SSLCertificateFile /var/lib/ssl/certs/srv.crt
+        SSLCertificateKeyFile /var/lib/ssl/private/srv.key
+        SSLCACertificateFile /var/lib/ssl/certs/ca.crt
+
+        ProxyPreserveHost On
+        ProxyPass / http://localhost:8080/
+        ProxyPassReverse / http://localhost:8080/
+    </VirtualHost>
+
+</IfModule>
+EOF
+
+# Включаем конфиг
+ln -s /etc/httpd2/conf/sites-available/lab-ssl.conf /etc/httpd2/conf/sites-enabled/lab-ssl.conf
+
+# Проверяем и перезапускаем
+httpd2 -t
+systemctl restart httpd2
+
+# Убеждаемся что оба порта слушаются
+ss -tlnp | grep httpd2
+```
+
+### Шаг 7: Передаём ca.crt на cli
+
+```bash
+# На srv (порт SSH 2222, логин admin)
+scp -P 2222 /var/lib/ssl/certs/ca.crt admin@cli.lab.local:/tmp/
+```
+
+### Шаг 8: Устанавливаем сертификат на cli
+
+```bash
+# Системное хранилище ALT Linux
+cp /tmp/ca.crt /etc/pki/ca-trust/source/anchors/lab-ca.crt
+update-ca-trust
+
+# Устанавливаем nss-utils если нет
+apt-get install -y nss-utils
+
+# Находим профиль Firefox
+find /home /root -path "*firefox*" -name "cert9.db" 2>/dev/null
+# Берём путь к папке из вывода, например:
+PROFILE=/home/user/.mozilla/firefox/6rqxzgkx.default-default
+
+# Устанавливаем в Firefox (одинарные кавычки обязательны!)
+certutil -A -n "LAB-CA" -t "CT,," -i /tmp/ca.crt -d sql:${PROFILE}
+
+# Проверяем
+certutil -L -d sql:${PROFILE} | grep LAB-CA
+```
+
+### Шаг 9: Выпускаем сертификат для dc.lab.local
+
+```bash
+# Копируем CA ключи с srv на dc
+scp -P 2222 /etc/ssl/CA/certs/ca.crt admin@dc.lab.local:/tmp/
+scp -P 2222 /etc/ssl/CA/private/ca.key admin@dc.lab.local:/tmp/
+
+# На dc:
+mkdir -p /etc/ssl/CA/{certs,private}
+cp /tmp/ca.crt /etc/ssl/CA/certs/ca.crt
+cp /tmp/ca.key /etc/ssl/CA/private/ca.key
+chmod 600 /etc/ssl/CA/private/ca.key
+
+openssl genrsa -out /etc/ssl/CA/private/dc.key 2048
+
+openssl req -new -key /etc/ssl/CA/private/dc.key \
+  -out /etc/ssl/CA/dc.csr \
+  -subj "/C=RU/ST=Moscow/L=Moscow/O=LAB/CN=dc.lab.local"
+
+cat > /etc/ssl/CA/dc_ext.cnf << 'EOF'
+[v3_req]
+subjectAltName = @alt_names
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+[alt_names]
+DNS.1 = dc.lab.local
+DNS.2 = moodle.lab.local
+EOF
+
+openssl x509 -req -days 365 \
+  -in /etc/ssl/CA/dc.csr \
+  -CA /etc/ssl/CA/certs/ca.crt \
+  -CAkey /etc/ssl/CA/private/ca.key \
+  -CAcreateserial \
+  -out /etc/ssl/CA/certs/dc.crt \
+  -extfile /etc/ssl/CA/dc_ext.cnf \
+  -extensions v3_req
+
+# Проверяем
+openssl x509 -noout -subject -issuer -dates -in /etc/ssl/CA/certs/dc.crt
+```
