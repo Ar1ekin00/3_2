@@ -1269,12 +1269,6 @@ scp -P 2222 /var/lib/ssl/certs/ca.crt admin@cli.lab.local:/tmp/
 # На srv
 cp /var/lib/ssl/certs/ca.crt /root/
 smbclient //localhost/share -U ivanov
-```
-
-```bash
-# На srv
-cp /var/lib/ssl/certs/ca.crt /root/
-smbclient //localhost/share -U ivanov
 # Внутри для скачивания из каталога и загрузки в каталог файлов используй команды get и put
 ```
 
