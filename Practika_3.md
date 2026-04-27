@@ -374,11 +374,17 @@ nano install_htop.yml
 - name: установка htop на servers
   hosts: servers
   become: yes
+
   tasks:
-    - name: обновить пакеты
-      shell: apt-get update
+    - name: обновить кэш пакетов
+      ansible.builtin.package:
+        update_cache: yes
+      
+
     - name: установить htop
-      shell: apt-get install -y htop
+      ansible.builtin.package:
+        name: htop
+        state: present
 ```
 **Команды:**
 ```bash
