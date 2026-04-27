@@ -1261,6 +1261,23 @@ ss -tlnp | grep httpd2
 scp -P 2222 /var/lib/ssl/certs/ca.crt admin@cli.lab.local:/tmp/
 ```
 
+Если scp не работает, используй общий сетевой каталог, который настроили в 9 задании:
+- Для подключения к общей папке с dc и cli используй команду `smbclient //web/share -U ivanov`
+- Для подключения к общей папке с srv используй команду `smbclient //localhost/share -U ivanov`
+
+```bash
+# На srv
+cp /var/lib/ssl/certs/ca.crt /root/
+smbclient //localhost/share -U ivanov
+```
+
+```bash
+# На srv
+cp /var/lib/ssl/certs/ca.crt /root/
+smbclient //localhost/share -U ivanov
+# Внутри для скачивания из каталога и загрузки в каталог файлов используй команды get и put
+```
+
 ### Шаг 8: Устанавливаем сертификат на cli
 
 ```bash
