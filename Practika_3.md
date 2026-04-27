@@ -558,32 +558,21 @@ kinit petrov@LAB.LOCAL
 kinit sidorov@LAB.LOCAL
 ```
 Для установки групповой политики: 
-1. Пуск -> 
-2. В поиске "ADMC" -> 
-3. Заходишь за пользователя administrator -> 
-4. В левом окне "Group policy Objects" ->
-5. lab.local ->
-6. Здесь есть папки "managers" и "admins" ->
-7. Нажать ПКМ по одной из них (admins, например) и в открывшемся списке выбрать "Create a GPO and link to this OU" - имя для групповой политики ставь какое хочешь ->
-8. Нажать ПКМ на папку "managers" и выбрать "Link existing GPO" - выбираешь созданную тобой ранее политику ->
-9. Нажать ЛКМ на созданную политику - в левом окне включить галочку под Enforced для обеих групп пользователей ->
-10. Далее нажимаешь ПКМ по этой же политике ->
-11. edit (чтобы изменить групповую политику) ->
-12. User ->
-13. Administrative Templates ->
-14. ALT System ->
-15. Mate settings ->
-16. Screensaver в этой папке есть несколько политик, которые нужно включить:
+1. Пуск → поиск "ADMC"
+2. Войти за `Administrator`
+3. В левой панели: `Group Policy Objects` → `lab.local`
+4. ПКМ по OU `admins` → `Create a GPO and link to this OU` → задать имя
+5. ПКМ по OU `managers` → `Link existing GPO` → выбрать созданную политику
+6. Кликнуть по политике → включить галочку `Enforced` для обеих групп
+7. ПКМ по политике → `Edit`
+8. Путь: `User → Administrative Templates → ALT System → Mate settings → Screensaver`
 
-Enable screen saver -> галочку под Enabled, а в самом низу OK.  (при бездействии включает заставку) 
-
-Lock your computer -> галочку под Enabled, в самом низу OK. (Блокировка компьютера)
-
-Logout after being locked -> галочку под Enabled, в самом низу OK.
-
-Operating mode -> галочку под Enabled, в options выбрать "Random themes", самом низу OK.
-
-Switch user after blocking -> галочку под Disabled, в самом низу OK.
+Включить следующие политики (галочка `Enabled`, затем `OK`):
+- `Enable screen saver` — включает заставку при бездействии
+- `Lock your computer` — блокировка компьютера
+- `Logout after being locked` — выход после блокировки
+- `Operating mode` → в Options выбрать `Random themes`
+- `Switch user after blocking` → поставить `Disabled`
 
 Для отчёта напиши, типа "Настроил именно эти политики, для большей безопасности данных. Если владельца долго нет за ПК, то постороннние люди не смогут им воспользоваться, так как для разблокировки требуется пароль пользователя"
 
