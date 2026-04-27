@@ -1337,3 +1337,10 @@ openssl x509 -req -days 365 \
 # Проверяем
 openssl x509 -noout -subject -issuer -dates -in /etc/ssl/CA/certs/dc.crt
 ```
+
+
+В браузере открываем:
+- `https://web.lab.local/testapp/` — зелёный замок ✅
+- `https://docker.lab.local/` — зелёный замок ✅
+
+---
