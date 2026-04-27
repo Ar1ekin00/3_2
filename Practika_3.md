@@ -987,6 +987,16 @@ systemctl enable --now winbind smb nmb
 ```
 
 ### Для cli:
+**Команды:**
+```bash
+apt-get install pam_mount cifs-utils
+apt-get install systemd-settings-enable-kill-user-processes
+
+
+```
+
+
+### Для cli:
 
 (Для отчёта): 
 
