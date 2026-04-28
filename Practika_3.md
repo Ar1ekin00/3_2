@@ -398,12 +398,11 @@ nano install_htop.yml
 
   tasks:
     - name: обновить кэш пакетов
-      ansible.builtin.package:
+      apt_rpm:
         update_cache: yes
-      
 
     - name: установить htop
-      ansible.builtin.package:
+      apt_rpm:
         name: htop
         state: present
 ```
