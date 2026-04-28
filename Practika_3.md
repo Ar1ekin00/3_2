@@ -998,8 +998,11 @@ systemctl enable --now winbind smb nmb
 
 ### Для cli (монтирование каталогов instructions, share и secret):
 **Команды:**
+Если редактировать конфиг pam_mount.conf.xml без переустановки, то почему-то выдаёт ошибку, поэтому сначала установим все пакеты, удалим и заново установим
 ```bash
-apt-get install pam_mount cifs-utils systemd-settings-enable-kill-user-processes
+apt-get -y install pam_mount cifs-utils systemd-settings-enable-kill-user-processes
+apt-get -y remove pam_mount cifs-utils systemd-settings-enable-kill-user-processes
+apt-get -y install pam_mount cifs-utils systemd-settings-enable-kill-user-processes
 ```
 *В файле:*
 ```bash
