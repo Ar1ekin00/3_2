@@ -1343,7 +1343,7 @@ openssl x509 -noout -subject -issuer -dates -in /etc/ssl/CA/certs/dc.crt
 
 
 В браузере открываем:
-- `https://web.lab.local/testapp/` — зелёный замок ✅
-- `https://docker.lab.local/` — зелёный замок ✅
+- `https://web.lab.local` — зелёный замок ✅
+- `https://docker.lab.local` — зелёный замок ✅
 
 ---
