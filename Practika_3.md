@@ -1184,6 +1184,8 @@ ln -s /etc/httpd2/conf/mods-available/ssl.load /etc/httpd2/conf/mods-enabled/ssl
 ln -s /etc/httpd2/conf/mods-available/proxy.load /etc/httpd2/conf/mods-enabled/proxy.load
 ln -s /etc/httpd2/conf/mods-available/proxy.conf /etc/httpd2/conf/mods-enabled/proxy.conf
 ln -s /etc/httpd2/conf/mods-available/proxy_http.load /etc/httpd2/conf/mods-enabled/proxy_http.load
+ln -s /etc/httpd2/conf/mods-available/substitute.load /etc/httpd2/conf/mods-enabled/
+ln -s /etc/httpd2/conf/mods-available/headers.load /etc/httpd2/conf/mods-enabled/
 
 # Проверяем
 httpd2 -M 2>&1 | grep ssl
@@ -1241,6 +1243,10 @@ cat > /etc/httpd2/conf/sites-available/lab-ssl.conf << 'EOF'
         ProxyPreserveHost On
         ProxyPass / http://localhost:8080/
         ProxyPassReverse / http://localhost:8080/
+
+        # Автоматическое обновление HTTP-ссылок до HTTPS
+        Header set Content-Security-Policy "upgrade-insecure-requests;"
+
     </VirtualHost>
 
 </IfModule>
