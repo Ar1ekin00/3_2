@@ -103,10 +103,12 @@
 ---
 
 Команды для проверки:
+```bash
 show interface tunnel.0
 show running-config
 show ip route ospf
 show dhcp-server 1 detailed
+```
 
 ---
 ## Модуль 1. Настройка сетевой инфраструктуры
