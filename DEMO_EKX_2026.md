@@ -108,6 +108,7 @@ show interface tunnel.0
 show running-config
 show ip route ospf
 show dhcp-server 1 detailed
+show ip interface brief
 ```
 
 ---
