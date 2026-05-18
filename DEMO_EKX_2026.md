@@ -259,7 +259,6 @@ ip nat source dynamic inside-to-outside pool NAT overload interface int0
 #### 2.3 Настройка GRE-туннель 
 ```bash
 interface tunnel.0
-ip mtu 1400
 ip address 10.0.0.2/30
 ip tunnel 172.16.1.2 172.16.2.2 mode gre
 no shutdown
@@ -269,10 +268,10 @@ exit
 #### 2.4 Настройка динамической маршрутизации (OSPF) на HQ-RTR
 ```bash
 router ospf 1
-network 192.168.10.0 0.0.0.7 area 0
-network 192.168.20.0 0.0.0.15 area 0
-network 192.168.99.0 0.0.0.7 area 0
-network 10.0.0.0 0.0.0.3 area 0.0.0.0
+network 192.168.10.0/29 area 0
+network 192.168.20.0/28 area 0
+network 192.168.99.0/29 area 0
+network 10.0.0.0/30 area 0.0.0.0
 passive-interface default
 no passive-interface tunnel.0
 area 0 authentication message-digest
@@ -296,7 +295,6 @@ mask 255.255.255.240
 gateway 192.168.20.1
 dns 8.8.8.8
 domain-name net01tech.institute
-lease 3600
 exit
 exit
 interface int1.200 
@@ -552,24 +550,6 @@ ssh remote_admin@192.168.30.2 -p 2201  #Подключение к BR-SRV
 ```bash
 # Установка пакета
 apt-get install dnsmasq 
-
-# Настройка dnsmasq
-mcedit /etc/sysconfig/dnsmasq
-
-# В файле отключаем автоматическое обновление resolv.conf хелпером
-USE_RESOLV_CONF="no"
-
-# Редактирование файла
-EDITOR=mcedit systemctl edit dnsmasq.service 
-
-# Добавить
-[Service]
-ExecStart=
-ExecStart=/usr/sbin/dnsmasq -k --user=root --pid-file=/run/dnsmasq.pid
- 
-# Запуск 
-systemctl daemon-reload
-systemctl enable --now dnsmasq
  
 # Редактирование файла
 mcedit /etc/resolv.conf
@@ -588,8 +568,7 @@ interface=*
 bind-interfaces
 
 # Можно указать только 8.8.8.8
-server=77.88.8.7
-server=77.88.8.3
+server=8.8.8.8
 
 # Две настройки ниже указаны по умолчанию, но стоит перепроверить
 expand-hosts
