@@ -367,7 +367,6 @@ ip nat source dynamic inside-to-outside pool NAT overload interface int0
 #### 3.3 Настройка GRE-туннель 
 ```bash
 interface tunnel.0
-ip mtu 1400
 ip address 10.0.0.1/30
 ip tunnel 172.16.2.2 172.16.1.2 mode gre
 no shutdown
