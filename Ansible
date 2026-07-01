@@ -5,7 +5,7 @@ ip - 10.0.128.1
 config
 no security default
 interface eth0
-  ip address 10.0.128.2/30
+  ip address 10.0.128.2/24
   port te0
   service-instance te0/eth0
   encapsulation untagged
