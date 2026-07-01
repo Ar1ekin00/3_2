@@ -4,12 +4,12 @@ ip - 10.0.128.1
 настроить на ecorouter:
 config
 no security default
-interface eth0
+interface eth1
   ip address 10.0.128.2/24
-  port te0
-  service-instance te0/eth0
+  port te1
+  service-instance te1/eth1
   encapsulation untagged
-  connect ip interface eth0
+  connect ip interface eth1
 
 установить ansible
 apt-get install ansible
